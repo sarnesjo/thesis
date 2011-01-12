@@ -1,2 +1,7 @@
 *.swp
 .DS_Store
+thesis.aux
+thesis.log
+thesis.out
+thesis.pdf
+thesis.toc
