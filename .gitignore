@@ -1,6 +1,8 @@
 *.swp
 .DS_Store
 thesis.aux
+thesis.bbl
+thesis.blg
 thesis.log
 thesis.out
 thesis.pdf
