@@ -1,5 +1,11 @@
 *.swp
 .DS_Store
+spec.aux
+spec.bbl
+spec.blg
+spec.log
+spec.out
+spec.pdf
 thesis.aux
 thesis.bbl
 thesis.blg
