@@ -35,31 +35,29 @@
 
 \section*{Background}
 
-The term \emph{superoptimizer} was coined by Henry Massalin in 1987, to describe a tool for finding the shortest program that computes a given function.
+The term \emph{superoptimizer} was coined by Henry Massalin in 1987, to describe a tool for finding the shortest assembly language program that computes a given function.
 
-The superoptimizers described by Massalin, as well as others in later works, all function in a similar fashion:
-The superoptimizer receives as input a definition of the desired function, in the form of code in assembly language or a tool-specific language, or directly as a goal function.
+The superoptimizers described by Massalin, as well as others in later works, all operate in a similar fashion:
+The superoptimizer receives as input a goal function, either directly, or in the form of code in assembly language or a tool-specific language.
 It then begins searching for candidate programs, typically by exhaustively enumerating all possible sequences of instructions on the target architecture.
 Since the number of programs of length $n$ on an architecture with $m$ separate instructions is $m^n$, with $m$ typically being in the hundreds (or far greater if one takes immediate arguments into account), pruning the search tree is crucial.
 
 The candidate programs are tested for equivalence with the given program.
-Programs are considered equivalent if they always yield identical output given identical input.
+Programs are considered equivalent if they always yield identical output given identical and valid input.
 One method for determining equivalence is probabilistic testing, here defined as feeding the programs input (which may be random or carefully chosen), and comparing their output.
 This is fast, but may yield false positives, which makes manual inspection of the output necessary.
-One can also test equivalence formally, for instance by expressing the program as a boolean-logic function on the input arguments, and comparing it minterm by minterm to the original program.
+One can also test equivalence formally, for instance by expressing the candidate program and the goal function in boolean logic, and comparing them minterm by minterm.
 This method is significantly slower, but yields provably correct results.
-Typically, candidate programs are first subjected to a probabilistic test, which weeds out most them, and then, if necessary, to a formal test.
-
-Superoptimizers are commonly described as helpful tools for assembly language programmers, but in at least one case as fully automated tools for populating a database for a traditional optimizer.
+Typically, candidate programs are first subjected to a probabilistic test, which weeds out most of them, and to a formal test only if they pass the probabilistic one.
 
 \section*{Aim of study}
 
 In my thesis, tentatively titled \emph{Yet another proof-based superoptimizer},
-I will give a more detailed overview of existing research, and implement a rudimentary, but functional, superoptimizer.
+I will present an overview of existing research, and implement a rudimentary, but functional, superoptimizer.
 I've outlined some requirements for it below:
 
 \begin{itemize}
-\item It must be able to enumerate candidate programs. For this, it needs a model of the target instruction set, or the supported subset thereof.
+\item It must be able to enumerate candidate programs. For this, it needs a model of the target instruction set.
 \item Given a program, it must be able to measure its cost. A very simple cost model could just count the number of instructions. A more realistic one should take into account that some instructions may take several cycles to compute, always or due to dependencies.
 \item Given two programs, it must be able to determine whether or not they are equivalent. Final output should be provably correct.
 \item As stated above, the ability for a superoptimizer to aggressively prune its search tree, without missing an optimal program, is crucial to its usefulness. I expect to spend a significant portion of the implementation time on this.
@@ -70,7 +68,7 @@ Since this is potentially tricky, and not the focus of this project, I will prob
 
 I have tentatively decided on using some subset of the x86 instruction set as the target.
 An interesting property of x86 is that it is rather large, which presents both a challenge and an opportunity to a superoptimizer.
-Further, an obvious benefit of x86, is that it is used in virtually every modern personal computer, and specifically in the laptop I intend to use for this project.
+Further, an obvious benefit of x86, is that it is used in virtually every modern desktop or laptop computer, and specifically in the laptop I intend to use for this project.
 With that said, I might decide on a different instruction set, should I find one with more interesting properties during the course of the project.
 
 \section*{Time plan}
@@ -102,7 +100,7 @@ papers I have already read \cite{massalin87,granlund92,joshi02,bansal06},
 follow-ups to those papers \cite{joshi03,joshi06,bansal_thesis},
 other papers which seem interesting \cite{bansal08,brain06_iclp,brain06_nmr,crick09,crick_thesis,fraser88,gulwani10,knights09,tate09,tate10},
 and technical manuals \cite{intel11_2a,intel11_2b}.
-I will given an oral presentation of my literature study, which will cover all papers I find to be relevent to my thesis, but not the technical manuals.
+I will give an oral presentation of my literature study, which will cover all papers I find to be relevent to my thesis, but not the technical manuals.
 
 \bibliographystyle{ieeetr} % use 'ieeetr' to get items sorted by citation order
 \bibliography{thesis}
