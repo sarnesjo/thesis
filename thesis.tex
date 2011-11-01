@@ -45,6 +45,29 @@
 
 \pagestyle{newchap}
 
+\chapter{Background}
+
+\section{Superoptimizers}
+
+A superoptimizer is a tool for finding the optimal program computing a given function.  % straight-line, loop-free
+Typically, it takes as its input a description of a program, and yields as its output an equivalent, but optimal, program.
+Here, two programs are considered equivalent if they always yield identical output given identical and valid input.
+
+There are many possible measures of the optimality of a program.
+The arguably simplest one is \emph{program length}, the number of instructions in the program.
+Using this measure, a program is considered optimal if no equivalent program contains fewer instructions.
+A similar measure is \emph{program size}, the number of bytes required to store the program. % difference only meaningful for variable instruction length architectures
+Another measure is \emph{execution time}, the number of clock cycles it takes for the program to run from start to finish. % different and more complicated because...
+The measures mentioned appear to be the ones used in practice, although any quantifiable property of a program could be used. % memory or power usage
+
+The search strategy typically employed by superoptimizers, is to exhaustively generate potentially optimal candidate programs and test them for equivalence with the input program.
+This works particularly well when the measure of optimality is program length, as the superoptimizer may then begin by generating and testing all programs of length 1, followed by those of length 2, and so on.
+The first program found to be equivalent to the input program will necessarily be an optimal program.
+
+It should be noted that exhaustive search over the space of all potentially optimal programs is very slow.
+The number of programs of length $n$ using an instruction set consisting of $b$ instructions is $b^n$. % effective
+For this reason, it is crucial to aggressively prune the search tree, ignoring programs which cannot possibly be optimal.
+
 \nocite{*} % TODO
 \bibliographystyle{alpha}
 \bibliography{thesis}
