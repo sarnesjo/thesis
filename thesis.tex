@@ -70,6 +70,57 @@ It should be noted that exhaustive search over the space of all potentially opti
 The number of programs of length $n$ using an instruction set consisting of $b$ instructions is $b^n$. % effective
 For this reason, it is crucial to aggressively prune the search tree, ignoring programs which cannot possibly be optimal.
 
+% determining equivalence
+
+\subsection{History}
+
+The term superoptimizer was coined by Henry Massalin in a paper published in 1987.
+% Motorola 68020
+% subset, no mem
+% program length, exhaustive search
+% equivalence tests: boolean -> 40/s, probabilistic -> 50k/s (executes code, host instruction set only)
+% pruning: subsequence must also be optimal (only true for program size metric)
+% applications
+\cite{massalin87}
+
+% GSO, the GNU superoptimizer
+% like massalin: program length, probabilistic
+% simulates instead of executes -> supports many architectures
+% machine: registers + carry bit, no mem
+% input: goal function compiled in
+% pruning
+% branching factor "between 100 and 1000"
+% source code available
+\cite{granlund92}
+
+% Denali
+% first publication in 2002
+% execution time, provably correct equivalence, multiple assignments
+% matcher
+% solver
+% input in somewhat C-like DSL
+\cite{joshi02}
+
+% Denali-2
+% program length
+% theoretical description of algo only, no implementation
+\cite{joshi06}
+
+% Bansal
+% peephole superoptimizer
+% fully automatic
+% input: binary
+% output: replacement rules
+% execution time, program size
+% x86
+% pruning: meet-in-the-middle
+% interesting application: binary translator
+% source code available
+\cite{bansal_thesis}
+
+% TOAST, Total Optimisation using Answer Set Technology
+\cite{crick_thesis}
+
 \section{Binary decision diagrams}
 
 \chapter{...}
@@ -101,8 +152,7 @@ For this reason, it is crucial to aggressively prune the search tree, ignoring p
 
 % most difficult: multiplication
 
-\nocite{*} % TODO
-\bibliographystyle{alpha}
+\bibliographystyle{ieeetr}
 \bibliography{thesis}
 
 \appendix
