@@ -123,6 +123,27 @@ The term superoptimizer was coined by Henry Massalin in a paper published in 198
 
 \section{Binary decision diagrams}
 
+A binary decision diagram (BDD) is a data structure used to efficiently represent a boolean function.
+% BDD also called branching program (relevant?)
+% boolean function also called switching function
+% boolean function f : B^k -> B
+% mention other ways of representing boolean functions
+
+% reduced: merge/collapse isomorphic subgraphs, eliminate node whose children are isomorphic (same?)
+% ordered: variables appear in same order on all paths from source to sink
+% ROBDD: reduced,ordered BDD -> canonical for given function and variable order, functions are equivalent if graphs are isomorphic
+
+% shared: join graphs, multiple roots
+% SROBDD: shared ROBDD -> memory efficient, equivalence test is single pointer comparison
+
+% variable order has big effect
+% choosing optimal is NP-complete/hard?
+
+\cite{lee59}
+\cite{akers78}
+\cite{bryant86}
+\cite{minato90}
+
 \chapter{...}
 
 % machine: registers,flags
