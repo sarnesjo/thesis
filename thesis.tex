@@ -45,6 +45,8 @@
 
 \pagestyle{newchap}
 
+\chapter{Introduction}
+
 \chapter{Background}
 
 \section{Superoptimizers}
@@ -67,6 +69,37 @@ The first program found to be equivalent to the input program will necessarily b
 It should be noted that exhaustive search over the space of all potentially optimal programs is very slow.
 The number of programs of length $n$ using an instruction set consisting of $b$ instructions is $b^n$. % effective
 For this reason, it is crucial to aggressively prune the search tree, ignoring programs which cannot possibly be optimal.
+
+\section{Binary decision diagrams}
+
+\chapter{...}
+
+% machine: registers,flags
+
+\section{...}
+
+\subsection{Flag control}
+
+% stc,clc,cmc
+
+\subsection{Data transfer}
+
+% mov,cmov
+
+\subsection{Logic}
+
+% and,or,xor
+% not (one's complement negation)
+
+\subsection{Addition and subtraction}
+
+% add
+% adc,sub,sbb,cmp,inc,dec all similar
+% neg (two's complement negation): not+inc
+
+\subsection{Multiplication}
+
+% most difficult: multiplication
 
 \nocite{*} % TODO
 \bibliographystyle{alpha}
