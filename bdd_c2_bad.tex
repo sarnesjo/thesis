@@ -1,0 +1,76 @@
+\begin{tikzpicture}
+[every node/.style={draw=black,thick,minimum size=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
+ var/.style={circle},
+ val/.style={rectangle},
+ thick]
+\node[var] (a0)                                            {$a_0$};
+\node[var] (a1A) [on grid,below  left=8mm and 24mm of a0]  {$a_1$};
+\node[var] (a1B) [on grid,below right=8mm and 24mm of a0]  {$a_1$};
+\node[var] (a2A) [on grid,below  left=8mm and 12mm of a1A] {$a_2$};
+\node[var] (a2B) [on grid,below right=8mm and 12mm of a1A] {$a_2$};
+\node[var] (a2C) [on grid,below  left=8mm and 12mm of a1B] {$a_2$};
+\node[var] (a2D) [on grid,below right=8mm and 12mm of a1B] {$a_2$};
+\node[var] (b0A) [on grid,below right=8mm and  0mm of a2A] {$b_0$};
+\node[var] (b0B) [on grid,below right=8mm and  0mm of a2B] {$b_0$};
+\node[var] (b0C) [on grid,below right=8mm and  0mm of a2C] {$b_0$};
+\node[var] (b0D) [on grid,below right=8mm and  0mm of a2D] {$b_0$};
+\node[var] (b1A) [on grid,below right=8mm and 12mm of b0A] {$b_1$};
+\node[var] (b1B) [on grid,below right=8mm and 12mm of b0C] {$b_1$};
+\node[var] (b2)  [on grid,below right=8mm and 24mm of b1A] {$b_2$};
+\node[val] (0)   [on grid,below  left=8mm and 24mm of b2]  {0};
+\node[val] (1)   [on grid,below right=8mm and 24mm of b2]  {1};
+\path[dashed] (a0)  edge (a1A);
+\path         (a0)  edge (a1B);
+\path[dashed] (a1A) edge (a2A);
+\path         (a1A) edge (a2B);
+\path[dashed] (a1B) edge (a2C);
+\path         (a1B) edge (a2D);
+\path[dashed] (a2A) edge (0);
+\path         (a2A) edge (b2);
+\path[dashed] (a2B) edge (b1A);
+\path         (a2B) edge (b1B);
+\path[dashed] (a2C) edge (b0A);
+\path         (a2C) edge (b0C);
+\path[dashed] (a2D) edge (b0B);
+\path         (a2D) edge (b0D);
+\path[dashed] (b0A) edge (0);
+\path         (b0A) edge (b1A);
+\path[dashed] (b0B) edge (b1A);
+\path         (b0B) edge (b2);
+\path[dashed] (b0C) edge (b2);
+\path         (b0C) edge (b1B);
+\path[dashed] (b0D) edge (b1B);
+\path         (b0D) edge (1);
+\path[dashed] (b1A) edge (0);
+\path         (b1A) edge (b2);
+\path[dashed] (b1B) edge (b2);
+\path         (b1B) edge (1);
+\path[dashed] (b2)  edge (0);
+\path         (b2)  edge (1);
+\node[var] (Ga0)  [on grid,right=60mm of a0]                {$a_0$};
+\node[var] (Gb0)  [on grid,below right=8mm and 6mm of Ga0]  {$b_0$};
+\node[var] (Ga1A) [on grid,below  left=8mm and 6mm of Gb0]  {$a_1$};
+\node[var] (Ga1B) [on grid,below right=8mm and 6mm of Gb0]  {$a_1$};
+\node[var] (Gb1)  [on grid,below right=8mm and 6mm of Ga1A] {$b_1$};
+\node[var] (Ga2A) [on grid,below  left=8mm and 6mm of Gb1]  {$a_2$};
+\node[var] (Ga2B) [on grid,below right=8mm and 6mm of Gb1]  {$a_2$};
+\node[var] (Gb2)  [on grid,below right=8mm and 6mm of Ga2A] {$b_2$};
+\node[val] (G0)   [on grid,below  left=8mm and 6mm of Gb2]  {0};
+\node[val] (G1)   [on grid,below right=8mm and 6mm of Gb2]  {1};
+\path[dashed] (Ga0)  edge (Ga1A);
+\path         (Ga0)  edge (Gb0);
+\path[dashed] (Gb0)  edge (Ga1A);
+\path         (Gb0)  edge (Ga1B);
+\path[dashed] (Ga1A) edge (Ga2A);
+\path         (Ga1A) edge (Gb1);
+\path[dashed] (Ga1B) edge (Gb1);
+\path         (Ga1B) edge (Ga2B);
+\path[dashed] (Gb1)  edge (Ga2A);
+\path         (Gb1)  edge (Ga2B);
+\path[dashed] (Ga2A) edge (G0);
+\path         (Ga2A) edge (Gb2);
+\path[dashed] (Ga2B) edge (Gb2);
+\path         (Ga2B) edge (G1);
+\path[dashed] (Gb2)  edge (G0);
+\path         (Gb2)  edge (G1);
+\end{tikzpicture}

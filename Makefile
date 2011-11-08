@@ -1,11 +1,12 @@
 GNUPLOT_TEX_FILES = so_program_length.tex
+TIKZ_TEX_FILES = bdd_c1.tex bdd_c2_bad.tex
 
 all: spec.pdf thesis.pdf
 
 spec.pdf: spec.tex thesis.bib
 	rubber --pdf spec.tex
 
-thesis.pdf: thesis.tex thesis.bib $(GNUPLOT_TEX_FILES)
+thesis.pdf: thesis.tex thesis.bib $(GNUPLOT_TEX_FILES) $(TIKZ_TEX_FILES)
 	rubber --pdf thesis.tex
 
 $(GNUPLOT_TEX_FILES): %.tex: %.gpi

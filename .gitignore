@@ -1,5 +1,7 @@
 *.swp
 .DS_Store
+bdd_c1.aux
+bdd_c2_bad.aux
 gnuplot-lua-tikz.sty
 so_program_length.aux
 so_program_length.tex
