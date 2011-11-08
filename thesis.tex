@@ -126,7 +126,7 @@ The term superoptimizer was coined by Henry Massalin in a paper published in 198
 
 \section{Binary decision diagrams}
 
-Binary decision diagram (BDDs) are data structures used to efficiently represent a Boolean functions.
+\emph{Binary decision diagrams} (BDDs) are data structures used to efficiently represent Boolean functions.
 They consist of nodes, representing the function's variables. Each node has one or more incoming paths, and exactly two outgoing paths, commonly referred to as the \emph{high} and \emph{low} path.
 When using a BDD to determine the value of a Boolean function, one follows a node's high path if its variable is 1, and it's low path if its variable is 0, starting at the root node, until one arrives at a terminal node.
 
@@ -137,11 +137,12 @@ A more restricted type of BDD was introduced by Bryant \cite{bryant86}.
 In addition to the above, Bryant required the BDD to be \emph{ordered}, having its variables appear in the same order on all paths from the root to a terminal node,
 and to be \emph{reduced}, containing no node with the same high and low path, and no two distinct nodes with isomorphic subgraphs.
 Such a BDD is called a \emph{reduced ordered BDD} (ROBDD), and has several beneficial characteristics.
-First, the algorithms used to perform Boolean operations on one or a pair of ROBDDs, are efficient, requiring at worst a number of time steps proportial to the product of the number of nodes in the two ROBDDs.
+First, the algorithms used to perform Boolean operations on one or a pair of ROBDDs, are efficient, requiring at worst a number of time steps proportional to the product of the number of nodes in the two ROBDDs.
 Further, ROBDDs are \emph{canonical} representations of their Boolean functions, meaning that two Boolean functions are equivalent iff their ROBDDs are isomorphic.
 
 Bryant also further explored the idea of representing multiple functions in a single BDD, which would later be referred to as a \emph{shared BDD} by Minato et al \cite{minato90}.
-This type of BDD, the \emph{shared reduced ordered BDD} (SROBDD), has the added benefits of being memory efficient, and allowing an isomorphism test to be implemented as a single pointer comparison.
+
+A BDD with all these characteristics, a \emph{shared reduced ordered BDD} (SROBDD), has the added benefits of being memory efficient, and of allowing an isomorphism test to be implemented as a single pointer comparison.
 
 Bryant showed that the variable ordering used can have a dramatic effect on the number of nodes in a BDD, which in the best case is linear in the number of variables, and in the worst case exponential.
 Further, finding the variable ordering which minimized the number of nodes is a coNP-complete problem. % proof? just say NP?
