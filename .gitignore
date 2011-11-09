@@ -1,5 +1,8 @@
 *.swp
 .DS_Store
+gnuplot-lua-tikz.sty
+so_program_length.aux
+so_program_length.tex
 spec.aux
 spec.bbl
 spec.blg

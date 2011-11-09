@@ -5,6 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[swedish,english]{babel}
 \usepackage{modifications}
+\usepackage{gnuplot-lua-tikz}
 
 \usepackage{hyperref}
 \hypersetup{colorlinks,citecolor=black,filecolor=black,linkcolor=black,urlcolor=black}
@@ -83,6 +84,17 @@ The first method is referred to as the \emph{Boolean test}.
 To improve the performance of the superoptimizer, Massalin therefore developed a second method, referred to as the \emph{probabilistic test}.
 % 50000 programs per second
 % host instruction set only
+
+Figure~\ref{fig:so_program_length}
+
+\begin{figure}
+\centering
+\include{so_program_length}
+\caption{The maximum length of a program generated in 24 hours, as a function of the effective size of the instruction set.
+The solid and dashed lines represent Massalin's superoptimizer using the Boolean and probabilistic tests, respectively.
+The dotted line represents a hypothetical modern superoptimizer.}
+\label{fig:so_program_length}
+\end{figure}
 
 the GNU superoptimizer (GSO), Granlund and Kenner \cite{granlund92}
 % like massalin: program length, probabilistic
