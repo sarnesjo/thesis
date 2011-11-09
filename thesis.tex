@@ -54,75 +54,73 @@
 
 \section{Superoptimizers}
 
-A superoptimizer is a tool for finding the optimal program computing a given function.  % straight-line, loop-free
-Typically, it takes as its input a description of a program, and yields as its output an equivalent, but optimal, program.
-Here, two programs are considered equivalent if they always yield identical output given identical and valid input.
+The term \emph{superoptimizer} was coined by Massalin \cite{massalin87}, to describe a tool for finding the shortest straight-line program that computes a given function.
 
-There are many possible measures of the optimality of a program.
-The arguably simplest one is \emph{program length}, the number of instructions in the program.
-Using this measure, a program is considered optimal if no equivalent program contains fewer instructions.
-A similar measure is \emph{program size}, the number of bytes required to store the program. % difference only meaningful for variable instruction length architectures
-Another measure is \emph{execution time}, the number of clock cycles it takes for the program to run from start to finish. % different and more complicated because...
-The measures mentioned appear to be the ones used in practice, although any quantifiable property of a program could be used. % memory or power usage
+Massalin's implementation takes as its input a program written in assembly language for the Motorola 68020 processor.
+It then consults a table containing a subset of the processor's instruction set, and begins generating all combinations of these instructions, beginning with those of length 1, then 2, and so on.
+Each generated program is tested for equivalence with the input program.
+When a program passes the test, it is printed, and the search terminates.
+Because programs are tested in order of increasing length, this program will necessarily be \emph{optimal} in terms of length, meaning that no shorter equivalent program exists.
 
-The search strategy typically employed by superoptimizers, is to exhaustively generate potentially optimal candidate programs and test them for equivalence with the input program.
-This works particularly well when the measure of optimality is program length, as the superoptimizer may then begin by generating and testing all programs of length 1, followed by those of length 2, and so on.
-The first program found to be equivalent to the input program will necessarily be an optimal program.
+Naturally, exhaustively searching the space of all possible programs is a very slow process.
+Consider a machine with $r$ registers, and an instruction set consisting of $i_0$ instructions that take no arguments, $i_1$ instructions that take one argument, and $i_2$ instructions that take two arguments.
+The \emph{effective} size of the instruction set of this machine is then $i_0+i_1r+i_2r^2$, and the number of programs of length $n$ is $(i_0+i_1r+i_2r^2)^n$.
+Even for modest values of $i_0$, $i_1$, $i_2$ and $r$, the effective size of the instruction set ends up in the hundreds or thousands.
+Hence, a naive superoptimizer is only capable of generating very short programs in reasonable time.
 
-It should be noted that exhaustive search over the space of all potentially optimal programs is very slow.
-The number of programs of length $n$ using an instruction set consisting of $b$ instructions is $b^n$. % effective
-For this reason, it is crucial to aggressively prune the search tree, ignoring programs which cannot possibly be optimal.
+% when optimizing for program length, subsequence must also be optimal
+% $m$-dimensional tables, lookup values for sequences of length $m$
+% if a generated program contains a sequence marked as non-optimal, it is rejected without being tested
 
-% determining equivalence
+Massalin also describes two methods of determining whether a candidate program is equivalent to the input program, that is, whether they always yield identical output given identical and valid input.
 
-\subsection{History}
+The first method is referred to as the \emph{Boolean test}.
+% express both the input and the candidate program in Boolean logic
+% unspecified canonical form
+% programs equivalent iff identical minterm for minterm
+% 40 programs per second
 
-The term superoptimizer was coined by Henry Massalin in a paper published in 1987.
-% Motorola 68020
-% subset, no mem
-% program length, exhaustive search
-% equivalence tests: boolean -> 40/s, probabilistic -> 50k/s (executes code, host instruction set only)
-% pruning: subsequence must also be optimal (only true for program size metric)
-% applications
-\cite{massalin87}
+To improve the performance of the superoptimizer, Massalin therefore developed a second method, referred to as the \emph{probabilistic test}.
+% 50000 programs per second
+% host instruction set only
 
-% GSO, the GNU superoptimizer
+the GNU superoptimizer (GSO), Granlund and Kenner \cite{granlund92}
 % like massalin: program length, probabilistic
 % simulates instead of executes -> supports many architectures
 % machine: registers + carry bit, no mem
 % input: goal function compiled in
 % pruning
-% branching factor "between 100 and 1000"
-% source code available
-\cite{granlund92}
+%   only "live" operands are tried
+%   if carry bit not set, insn using it will not be generated
+%   for comm insns, only one ordering is tried
+%   on 3-operand archs, mov is never optimal, so not generated
+%   even more restrictive in leaf round
+%     specifically, ultimate insn must use output or carry from penultimate
 
-% Denali
-% first publication in 2002
+Denali, Joshi et al \cite{joshi02}
 % execution time, provably correct equivalence, multiple assignments
 % matcher
 % solver
 % input in somewhat C-like DSL
-\cite{joshi02}
 
-% Denali-2
+Denali-2 \cite{joshi06}
 % program length
 % theoretical description of algo only, no implementation
-\cite{joshi06}
 
-% Bansal
+Bansal \cite{bansal_thesis}
 % peephole superoptimizer
 % fully automatic
+% x86
 % input: binary
 % output: replacement rules
 % execution time, program size
-% x86
+% execution test, boolean test (SAT solver)
 % pruning: meet-in-the-middle
 % interesting application: binary translator
 % source code available
-\cite{bansal_thesis}
 
 % TOAST, Total Optimisation using Answer Set Technology
-\cite{crick_thesis}
+Crick \cite{crick_thesis}
 
 \cite{aha}
 \cite{pic}
