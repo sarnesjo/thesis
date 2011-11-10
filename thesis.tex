@@ -258,32 +258,195 @@ $a_0$ & $b_0$ & $a_1$ & $b_1$ & $c_0$ & $c_1$ \\
 \chapter{Design}
 \label{ch:design}
 
-% machine: registers,flags
+As a framework for exploring the use of BDDs to determine program equivalence, I developed a simple superoptimizer.
+Its implementation consists of roughly 2000 lines of C and C++ code, as well as a test suite created to aid development.
+Its design is inspired primarily by GSO.
+Since my focus was on equivalence testing, the other aspects of the design were mostly kept simple.
+It optimizes for program length.
 
-\section{...}
+The architecture of the superoptimizer's virtual machine is modelled after the x86, as described by the manuals issued by Intel Corporation \cite{intel_1,intel_2a,intel_2b}. % AMD?
+The machine state consists of 8 32-bit registers and 5 flag bits.
+The \emph{carry flag} (CF) and \emph{overflow flag} (OF) are ostensibly used to signify that an operation caused overflow when interpreted as unsigned and signed arithmetic, respectively, although many instructions treat them differently.
+The \emph{parity flag} (PF) is set when an even number of the least significant 8 bits of the result are set.
+The \emph{sign flag} (SF) is set equal to the most significant bit of the result.
+The \emph{zero flag} (ZF) is set when the result contains no set bits.
+
+The superoptimizer takes as its input programs written in a small subset of the x86 assembly language, using Intel's syntax with a few modifications.
+Registers are named r0--r7, rather than eax, ebx, etc.
+Statements are terminated by semicolons rather than newlines.
+Neither immediate values nor effective addresses are supported.
+Table~\ref{tab:insns} shows the supported instructions, along with their arity and behavior with regards to flags.
+
+\begin{table}
+\centering
+\begin{tabular}{lc|ccccc}
+name & arity & CF & OF & PF & SF & ZF \\
+\hline
+stc  & 0     & 1  &    &    &    &    \\
+clc  & 0     & 0  &    &    &    &    \\
+cmc  & 0     & TM &    &    &    &    \\
+mov  & 2     &    &    &    &    &    \\
+cmov & 2     & T  & T  & T  & T  & T  \\
+and  & 2     & 0  & 0  & M  & M  & M  \\
+or   & 2     & 0  & 0  & M  & M  & M  \\
+xor  & 2     & 0  & 0  & M  & M  & M  \\
+not  & 1     &    &    &    &    &    \\
+add  & 2     & M  & M  & M  & M  & M  \\
+adc  & 2     & TM & M  & M  & M  & M  \\
+sub  & 2     & M  & M  & M  & M  & M  \\
+sbb  & 2     & TM & M  & M  & M  & M  \\
+cmp  & 2     & M  & M  & M  & M  & M  \\
+inc  & 1     &    & M  & M  & M  & M  \\
+dec  & 1     &    & M  & M  & M  & M  \\
+neg  & 1     & M  & M  & M  & M  & M  \\
+\end{tabular}
+\caption{The instruction set of the superoptimizer.
+For the flags, 0 and 1 means that it is set to that value, M (modify) means that it is set according the result, and T (test) means that it is read.}
+\label{tab:insns}
+\end{table}
+
+The superoptimizer analyzes the registers used in the input program.
+Any register read from before written to is considered an input register.
+The last register written to is marked as the output register.
+Only a single output register is supported.
+
+For pruning, the generator keeps track of the set of live registers.
+Initially, this is equal to the set of input registers, and registers are added when written to.
+Only registers in the live set are considered when selecting arguments for instructions.
+Live flags are tracked in a similar way.
+
+% cmov a != b
+% leaf round
+
+Instructions are modelled in three ways.
+
+First, the superoptimizer has a lookup table that specifies which of an instruction's arguments, and which flags, are read from or written to.
+This is used by the generator to update the live sets, and to avoid generating instructions that depend on flags not yet defined.
+
+Second, the instructions' behavior is implemented in functions used in a probabilistic test.
+
+Finally, and most importantly, the instructions' behavior is modelled as operations on BDDs, for use in the Boolean test.
+For this, the software package BuDDy \cite{buddy} is used.
+
+\section{BDD model}
+
+The virtual machine's 8 32-bit registers are represented by $8 \times 32$ Boolean variables. % ordered r0b0,r1b0,...,r7b0,r1b0,etc
+The flags are functions rather than variables.
+
+The parity, sign and zero flags are defined in the same way for all instructions:
+
+\begin{verbatim}
+pf = !(a[0] ^ a[1] ^ a[2] ^ a[3] ^ a[4] ^ a[5] ^ a[6] ^ a[7])
+sf = a[31]
+zf = !(a[0] | a[1] | ... | a[31])
+\end{verbatim}
 
 \subsection{Flag control}
 
-% stc,clc,cmc
+The simplest instructions supported by the superoptimizer are the flag control instructions \emph{stc}, \emph{clc} and \emph{cmc}.
 
 \subsection{Data transfer}
 
-% mov,cmov
+The superoptimizer supports conditional and unconditional data transfer.
+The \emph{mov} instruction is used for the latter, and is implemented as follows:
+
+\begin{verbatim}
+for i = 0 to 31
+    a[i] = b[i]
+\end{verbatim}
+
+The \emph{cmov} instructions are used for conditional data transfer.
+There are 30 \emph{cmov} instructions in the x86 instruction set, but only 16 with unique behavior.
+They are all implemented as follows:
+
+\begin{verbatim}
+for i = 0 to 31
+    a[i] = !condition & a[i] | condition & b[i]
+\end{verbatim}
+
+% cmovc
+% cmovo
+% cmovp
+% cmovs
+% cmovz
+% cmovnc
+% cmovno
+% cmovnp
+% cmovns
+% cmovnz
+% cmova   above
+% cmovbe  below or equal
+% cmovg   greater
+% cmovge  greater or equal
+% cmovl   less
+% cmovle  less or equal
+
+% cmovae  above or equal=nc
+% cmovb   below=c
+% cmovna  not above=be
+% cmovnae not above or equal=c
+% cmovnb  not below=nc
+% cmovnbe not below or equal=a
+% cmovng  not greater=le
+% cmovnge not greater or equal=l
+% cmovnl  not less=ge
+% cmovnle not less or equal=g
+% cmove   equal=z
+% cmovne  not equal=zf
+% cmovpe  parity even=p
+% cmovpo  parity odd=np
+
+% above/below for unsigned
+% greater/less for signed
 
 \subsection{Logic}
 
-% and,or,xor
-% not (one's complement negation)
+The supported instructions for bitwise logic are \emph{and}, \emph{or}, \emph{xor} and \emph{not}.
+They are all simple, since each bit in the result depends only on the corresponding bit in the inputs.
+
+\emph{and} is implemented as follows:
+
+\begin{verbatim}
+for i = 0 to 31
+    a[i] = a[i] & b[i]
+\end{verbatim}
+
+\emph{or} and \emph{xor} are implemented similarly.
+
+\emph{not} is implemented as follows:
+
+\begin{verbatim}
+for i = 0 to 31
+    a[i] = !a[i]
+\end{verbatim}
 
 \subsection{Addition and subtraction}
 
-% add
-% adc,sub,sbb,cmp,inc,dec all similar
-% neg (two's complement negation): not+inc
+The \emph{add}, \emph{adc}, \emph{sub}, \emph{sbb}, \emph{cmp}, \emph{inc}, \emph{dec} and \emph{neg} instructions are all variants of addition.
 
-\subsection{Multiplication}
+\emph{add} is implemented as follows:
 
-% most difficult: multiplication
+\begin{verbatim}
+c[0] = a[0] & b[0]
+a[0] = a[0] ^ b[0]
+for i = 1 to 31
+    c[i] = a[i] & b[i] | a[i] & c[i-1] | b[i] & c[i-1]
+    a[i] = a[i] ^ b[i] ^ c[i-1]
+cf = c[31]
+of = c[30] ^ c[31]
+\end{verbatim}
+
+For \emph{adc} and \emph{sbb}, \emph{cf} is taken into account when \emph{c0} and \emph{a0} are set.
+For \emph{sub} and \emph{sbb}, the two's complement of \emph{b} is used.
+\emph{cmp} behaves like \emph{sub}, except it does not modify \emph{a}.
+\emph{inc} and \emph{dec} behave like \emph{add} and \emph{sub}, with fixed values for \emph{b}.
+
+\emph{neg} behaves like \emph{inc}, with the values for \emph{a} inverted.
+Further, it sets the carry flag if \emph{a} is non-zero:
+
+\begin{verbatim}
+cf = a[0] | a[1] | ... | a[31]
+\end{verbatim}
 
 \bibliographystyle{ieeetr}
 \bibliography{thesis}
