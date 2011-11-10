@@ -1,10 +1,9 @@
 set grid
 set logscale x
-set xlabel "effective size of instruction set"
+set xlabel "branching factor"
 set ylabel "program length"
 set xrange [1:10000]
 set yrange [0:20]
 
 plot log(40.0*60*60*24)/log(x) title "40 programs/s", \
-     log(50000.0*60*60*24)/log(x) title "50000 programs/s", \
-     log(100000000.0*60*60*24)/log(x) title "100000000 programs/s"
+     log(50000.0*60*60*24)/log(x) title "50000 programs/s"

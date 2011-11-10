@@ -57,7 +57,9 @@
 
 \section{Superoptimizers}
 
-The term \emph{superoptimizer} was coined by Massalin \cite{massalin87}, to describe a tool for finding the shortest straight-line program that computes a given function.
+\subsection{Massalin's superoptimizer}
+
+The term \emph{superoptimizer} was coined by Massalin in a 1987 paper \cite{massalin87}, to describe a tool for finding the shortest loop-free program that computes a given function.
 
 Massalin's implementation takes as its input a program written in assembly language for the Motorola 68020 processor.
 It then consults a table containing a subset of the processor's instruction set, and begins generating all combinations of these instructions, beginning with those of length 1, then 2, and so on.
@@ -65,79 +67,99 @@ Each generated program is tested for equivalence with the input program.
 When a program passes the test, it is printed, and the search terminates.
 Because programs are tested in order of increasing length, this program will necessarily be \emph{optimal} in terms of length, meaning that no shorter equivalent program exists.
 
-Naturally, exhaustively searching the space of all possible programs is a very slow process.
-Consider a machine with $r$ registers, and an instruction set consisting of $i_0$ instructions that take no arguments, $i_1$ instructions that take one argument, and $i_2$ instructions that take two arguments.
-The \emph{effective} size of the instruction set of this machine is then $i_0+i_1r+i_2r^2$, and the number of programs of length $n$ is $(i_0+i_1r+i_2r^2)^n$.
-Even for modest values of $i_0$, $i_1$, $i_2$ and $r$, the effective size of the instruction set ends up in the hundreds or thousands.
+Naturally, exhaustively searching the space of all possible programs is a very inefficient process, considering that the number of programs of length $n$ is $b^n$, where $b$ is the \emph{branching factor} of the search tree.
+To find a value of $b$, consider an architecture with $r$ registers, and an instruction set consisting of $i_0$ instructions that take no arguments, $i_1$ instructions that take one argument, and $i_2$ instructions that take two arguments.
+For this architecture, the branching factor would be, in the worst case, $i_0+i_1r+i_2r^2$.
+Even for modest values of $i_0$, $i_1$, $i_2$ and $r$, the branching factor ends up in the hundreds or thousands.
 Hence, a naive superoptimizer is only capable of generating very short programs in reasonable time.
 
-% when optimizing for program length, subsequence must also be optimal
-% $m$-dimensional tables, lookup values for sequences of length $m$
-% if a generated program contains a sequence marked as non-optimal, it is rejected without being tested
+To address this, Massalin's superoptimizer has a method of \emph{pruning} the search tree.
+The method exploits the fact that when optimizing for program length, an optimal sequence must not contain any non-optimal subsequences.
+Hence, a program which contains a known non-optimal subsequence can be rejected without being tested.
+The implementation consists of $m$-dimensional lookup tables, where $m$ is the length of the subsequence.
 
-Massalin also describes two methods of determining whether a candidate program is equivalent to the input program, that is, whether they always yield identical output given identical and valid input.
+Massalin also describes two methods of determining whether a candidate program is equivalent to the input program.
 
-The first method is referred to as the \emph{Boolean test}.
-% express both the input and the candidate program in Boolean logic
-% unspecified canonical form
-% programs equivalent iff identical minterm for minterm
-% 40 programs per second
+The first method, referred to as the \emph{Boolean test}, is to express both programs in Boolean logic, reduce them to an unspecified canonical form, and compare them minterm for minterm.
+Using this method, Massalin's superoptimizer is capable of testing 40 programs per second.
 
-To improve the performance of the superoptimizer, Massalin therefore developed a second method, referred to as the \emph{probabilistic test}.
-% 50000 programs per second
-% host instruction set only
+The second method, referred to as the \emph{probabilistic test}, is to simply execute both programs with identical input, and compare their output.
+This method is significantly faster, allowing the superoptimizer to test 50000 programs per second.
+However, it introduces the risk of false positives, in the form of programs that are equivalent only on the input used, not in the general case.
+Hence, manual verification of the output is required.
+Further, whereas the Boolean test can be used on any kind of program, the probabilistic test can only be used on programs written in the assembly language of the host architecture.
 
-Figure~\ref{fig:so_program_length}
+It is worth noting, that even with such a significant increase in speed, only slightly longer programs may be generated in reasonable time with a realistic branching factor, as illustrated by Figure~\ref{fig:so_program_length}.
 
 \begin{figure}
 \centering
 \include{so_program_length}
-\caption{The maximum length of a program generated in 24 hours, as a function of the effective size of the instruction set.
-The solid and dashed lines represent Massalin's superoptimizer using the Boolean and probabilistic tests, respectively.
-The dotted line represents a hypothetical modern superoptimizer.}
+\caption{The maximum length of a program generated in 24 hours, as a function of the branching factor. % clarify
+The solid and dashed lines represent Massalin's superoptimizer using the Boolean and probabilistic tests, respectively.}
 \label{fig:so_program_length}
 \end{figure}
 
-the GNU superoptimizer (GSO), Granlund and Kenner \cite{granlund92}
-% like massalin: program length, probabilistic
-% simulates instead of executes -> supports many architectures
-% machine: registers + carry bit, no mem
-% input: goal function compiled in
-% pruning
-%   only "live" operands are tried
-%   if carry bit not set, insn using it will not be generated
-%   for comm insns, only one ordering is tried
-%   on 3-operand archs, mov is never optimal, so not generated
-%   even more restrictive in leaf round
-%     specifically, ultimate insn must use output or carry from penultimate
+\subsection{GSO}
 
-Denali, Joshi et al \cite{joshi02}
-% execution time, provably correct equivalence, multiple assignments
-% matcher
-% solver
+GSO, the GNU superoptimizer, is described in a 1992 paper by Granlund and Kenner \cite{granlund92}.
+
+Like Massalin's superoptimizer, GSO optimizes for program length, and uses a probabilistic equivalence test.
+However, instead of executing instructions directly on the host architecture, it \emph{simulates} them using functions that operate on a virtual machine of sorts, consisting of a set of registers and a single carry bit.
+GSO is therefore capable of supporting a wide range of architectures, but also requires that the input program be specified as a compiled-in \emph{goal function}.
+
+Granlund and Kenner also describe numerous methods of pruning used in GSO.
+When selecting arguments for generated instructions, GSO only considers live registers, that is, registers that contain input values or have previously been written to.
+Similarly, instructions that read the carry flag are only generated after it has been set.
+For commutative instructions, which exist on some architectures, only one argument ordering is tried.
+
+When generating the last instruction in a program, GSO is even more restrictive.
+Specifically, it requires that the last instruction reads a register or the carry flag written to by the preceeding instruction, which would otherwise be superfluous.
+
+\subsection{Denali}
+
+Denali is a superoptimizer created by Joshi et al, then at Compaq Systems Research Center, first described in a 2002 paper \cite{joshi02}.
+
+Denali's design differs greatly from that of Massalin's superoptimizer or GSO.
+Rather than generating programs and then testing them, Denali starts by generating a set of programs equivalent to the input program, and then selects the optimal among them.
+
+To accomplish the first step, Denali requires a set of \emph{axioms}, which describe how instructions may be substituted for another without changing the meaning of the program.
+Such axioms may, for example, state that multiplication by $2^n$ is the same as right-shift by $n$.
+Axioms are also used to mark instructions as commutative or associative, and to specify their identity, for instance 0 for addition and 1 for multiplication.
+
+To select the optimal program, Denali rewrites the problem as a satisfaction problem, which is handed off to an external SAT solver.
+
+The authors claim that Denali is capable of optimizing for \emph{execution time}, that is, the number of cycles required for the program to terminate.
+This is remarkable, as determining the execution time for a program is more complicated than it may seem.
+The number of cycles required to execute an instruction, depends not only on the instruction itself, but also possibly on the instructions surrounding it, due to pipelining.
+In a follow-up paper \cite{joshi06}, the authors describe a simplified design, named Denali-2, which instead optimizes for program length.
+
 % input in somewhat C-like DSL
+% multiple assignments
+% Alpha EV-6
 
-Denali-2 \cite{joshi06}
-% program length
-% theoretical description of algo only, no implementation
+\subsection{Bansal's superoptimizer}
 
-Bansal \cite{bansal_thesis}
-% peephole superoptimizer
-% fully automatic
-% x86
-% input: binary
-% output: replacement rules
-% execution time, program size
-% execution test, boolean test (SAT solver)
-% pruning: meet-in-the-middle
-% interesting application: binary translator
-% source code available
+The superoptimizer created by Bansal and described in his 2008 PhD thesis \cite{bansal_thesis} differs from the ones described above, in that it requires no human supervision, neither for verifying its output, nor for selecting its input.
+Instead, it reads binaries compiled for the x86 architecture, harvesting instruction sequences to optimize.
+Its output is not an optimized program, but rather the optimizations discovered.
+In this way, Bansal's superoptimizer is capable of autonomously generating a very large library of optimizations, which can then be used by an ordinary peephole optimizer.
 
-% TOAST, Total Optimisation using Answer Set Technology
-Crick \cite{crick_thesis}
+Since output is required to be correct, optimizations are verified by a Boolean test performed by a SAT solver.
+To improve speed, candidate optimizations are first screened by a probabilistic test similar to that found in Massalin's superoptimizer or GSO.
 
-\cite{aha}
-\cite{pic}
+Other notable features of Bansal's superoptimizer is that it is capable of optimizing both for execution time and for program size.
+It also utilizes a meet-in-the-middle method of pruning, in which instructions are prohibited from overwriting values required at program termination.
+
+\subsection{TOAST}
+
+TOAST, short for \emph{total optimisation using answer set technology}, is a superoptimizer created by Crick and described in his 2009 PhD thesis \cite{crick_thesis}.
+It is implemented using Answer Set Programming, a declarative logic programming language.
+Like Denali and Bansal's superoptimizer, it produces provably correct output.
+
+%\subsection{...}
+%
+%\cite{aha}
+%\cite{pic}
 
 \section{Binary decision diagrams}
 
