@@ -165,7 +165,7 @@ Like Denali and Bansal's superoptimizer, it produces provably correct output.
 
 \emph{Binary decision diagrams} (BDDs) are data structures used to efficiently represent Boolean functions.
 They consist of nodes, representing the function's variables. Each node has one or more incoming paths, and exactly two outgoing paths, commonly referred to as the \emph{high} and \emph{low} path.
-When using a BDD to determine the value of a Boolean function, one follows a node's high path if its variable is 1, and it's low path if its variable is 0, starting at the root node, until one arrives at a terminal node.
+When using a BDD to determine the value of a Boolean function, one follows a node's high path if its variable is 1, and its low path if its variable is 0, starting at the root node, until one arrives at a terminal node.
 
 BDDs were introduced by Lee \cite{lee59}, under the name \emph{binary-decision programs}.
 They were given their current name by Akers \cite{akers78}, who also explored the ideas of \emph{reducing} BDDs by removing redundant nodes, and of representing multiple functions in a single BDD.
@@ -182,7 +182,11 @@ Bryant also further explored the idea of representing multiple functions in a si
 A BDD with all these characteristics, a \emph{shared reduced ordered BDD} (SROBDD), has the added benefits of being memory efficient, and of allowing an isomorphism test to be implemented as a single pointer comparison.
 
 Bryant showed that the variable ordering used can have a dramatic effect on the number of nodes in a BDD, which in the best case is linear in the number of variables, and in the worst case exponential.
-Further, finding the variable ordering which minimized the number of nodes is a coNP-complete problem. % proof? just say NP?
+Bryant states that finding the variable ordering that minimizes the number of nodes is a NP-complete problem.
+Bollig and Wegener \cite{bollig96} would later show that even improving on an existing ordering is a NP-complete problem.
+
+% asserts that for many problems, good order can be selected by human with domain knowledge
+% however, functions exists (e.g. multiplication) that require an exponential number of nodes regardless of ordering
 
 \subsection{Example}
 
@@ -208,6 +212,8 @@ $$
     2^{n+1}-2 & \textrm{using variable order $a_0,...,a_{n-1},b_0,...,b_{n-1}$} \\
   \end{array}\right.
 $$
+
+For $n = 32$, the BDD would consequently contain only 97 nodes with the first variable ordering, but over 8 billion with the second.
 
 \begin{table}
 \centering
