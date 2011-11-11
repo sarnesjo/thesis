@@ -270,7 +270,7 @@ Its design is inspired primarily by GSO.
 Since my focus was on equivalence testing, the other aspects of the design were mostly kept simple.
 It optimizes for program length.
 
-The architecture of the superoptimizer's virtual machine is modelled after the x86, as described by the manuals issued by Intel Corporation \cite{intel_1,intel_2a,intel_2b}. % AMD?
+The architecture of the superoptimizer's virtual machine is modeled after the x86, as described by the manuals issued by Intel Corporation \cite{intel_1,intel_2a,intel_2b}. % AMD?
 The machine state consists of 8 32-bit registers and 5 flag bits.
 The \emph{carry flag} (CF) and \emph{overflow flag} (OF) are ostensibly used to signify that an operation caused overflow when interpreted as unsigned and signed arithmetic, respectively, although many instructions treat them differently.
 The \emph{parity flag} (PF) is set when an even number of the least significant 8 bits of the result are set.
@@ -324,14 +324,14 @@ Live flags are tracked in a similar way.
 % cmov a != b
 % leaf round
 
-Instructions are modelled in three ways.
+Instructions are modeled in three ways.
 
 First, the superoptimizer has a lookup table that specifies which of an instruction's arguments, and which flags, are read from or written to.
 This is used by the generator to update the live sets, and to avoid generating instructions that depend on flags not yet defined.
 
 Second, the instructions' behavior is implemented in functions used in a probabilistic test.
 
-Finally, and most importantly, the instructions' behavior is modelled as operations on BDDs, for use in the Boolean test.
+Finally, and most importantly, the instructions' behavior is modeled as operations on BDDs, for use in the Boolean test.
 For this, the software package BuDDy \cite{buddy} is used.
 
 \section{BDD model}
