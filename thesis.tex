@@ -66,6 +66,10 @@ Chapter~\ref{ch:background} describes both superoptimizers and BDDs in detail, a
 
 Chapter~\ref{ch:design} describes the superoptimizer implemented for this thesis project.
 
+Chapter~\ref{ch:results} ...
+
+Chapter~\ref{ch:recommendations} ...
+
 \chapter{Background}
 \label{ch:background}
 
@@ -280,12 +284,16 @@ Its design is inspired primarily by GSO.
 Since my focus was on equivalence testing, the other aspects of the design were mostly kept simple.
 It optimizes for program length.
 
+\section{Architecture}
+
 The architecture of the superoptimizer's virtual machine is modeled after the x86, as described by the manuals issued by Intel Corporation \cite{intel_1,intel_2a,intel_2b}. % AMD?
 The machine state consists of 8 32-bit registers and 5 flag bits.
 The \emph{carry flag} (CF) and \emph{overflow flag} (OF) are ostensibly used to signify that an operation caused overflow when interpreted as unsigned and signed arithmetic, respectively, although many instructions treat them differently.
 The \emph{parity flag} (PF) is set when an even number of the least significant 8 bits of the result are set.
 The \emph{sign flag} (SF) is set equal to the most significant bit of the result.
 The \emph{zero flag} (ZF) is set when the result contains no set bits.
+
+\section{Input}
 
 The superoptimizer takes as its input programs written in a small subset of the x86 assembly language, using Intel's syntax with a few modifications.
 Registers are named r0--r7, rather than eax, ebx, etc.
@@ -326,6 +334,8 @@ Any register read from before written to is considered an input register.
 The last register written to is marked as the output register.
 Only a single output register is supported.
 
+\section{Generator}
+
 For pruning, the generator keeps track of the set of live registers.
 Initially, this is equal to the set of input registers, and registers are added when written to.
 Only registers in the live set are considered when selecting arguments for instructions.
@@ -344,10 +354,14 @@ Second, the instructions' behavior is implemented in functions used in a probabi
 Finally, and most importantly, the instructions' behavior is modeled as operations on BDDs, for use in the Boolean test.
 For this, the software package BuDDy \cite{buddy} is used.
 
+\section{Probabilistic model}
+
 \section{BDD model}
 
 The virtual machine's 8 32-bit registers are represented by $8 \times 32$ Boolean variables. % ordered r0b0,r1b0,...,r7b0,r1b0,etc
 The flags are functions rather than variables.
+
+\subsection{Flags}
 
 The parity, sign and zero flags are defined in the same way for all instructions:
 
@@ -490,6 +504,20 @@ Further, it sets the carry flag if a is non-zero:
 \begin{codebox}
 \zi $\id{cf} \gets a_0 + a_1 + ... + a_{n-1}$
 \end{codebox}
+
+\subsection{Multiplication}
+
+\chapter{Results}
+\label{ch:results}
+
+\section{...}
+
+% give example of programs that pass probabilistic test but not BDD test
+
+\section{Performance}
+
+\chapter{Recommendations}
+\label{ch:recommendations}
 
 \bibliographystyle{ieeetr}
 \bibliography{thesis}
