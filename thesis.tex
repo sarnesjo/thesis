@@ -65,7 +65,7 @@ Chapter~\ref{ch:design} describes the superoptimizer implemented for this thesis
 
 \subsection{Massalin's superoptimizer}
 
-The term \emph{superoptimizer} was coined by Massalin in a 1987 paper \cite{massalin87}, to describe a tool for finding the shortest loop-free program that computes a given function.
+The term \emph{superoptimizer} was coined by Massalin in a 1987 paper \cite{massalin87}, to describe a tool for finding the shortest straight-line program that computes a given function. % explain that straight-line means loop-free and branch-free?
 
 Massalin's implementation takes as its input a program written in assembly language for the Motorola 68020 processor.
 It then consults a table containing a subset of the processor's instruction set, and begins generating all combinations of these instructions, beginning with those of length 1, then 2, and so on.
@@ -87,13 +87,15 @@ The implementation consists of $m$-dimensional lookup tables, where $m$ is the l
 Massalin also describes two methods of determining whether a candidate program is equivalent to the input program.
 
 The first method, referred to as the \emph{Boolean test}, is to express both programs in Boolean logic, reduce them to an unspecified canonical form, and compare them minterm for minterm.
-Using this method, Massalin's superoptimizer is capable of testing 40 programs per second.
+Using this method, Massalin's superoptimizer is capable of testing 40 programs per second, when running on a 16 MHz processor.
 
 The second method, referred to as the \emph{probabilistic test}, is to simply execute both programs with identical input, and compare their output.
 This method is significantly faster, allowing the superoptimizer to test 50000 programs per second.
 However, it introduces the risk of false positives, in the form of programs that are equivalent only on the input used, not in the general case.
 Hence, manual verification of the output is required.
-Further, whereas the Boolean test can be used on any kind of program, the probabilistic test can only be used on programs written in the assembly language of the host architecture.
+Further, whereas the Boolean test can be used on any kind of program, Massalin's probabilistic test can only be used on programs written in the assembly language of the host architecture.
+
+% massalin claims probabilistic test sufficient
 
 It is worth noting, that even with such a significant increase in speed, only slightly longer programs may be generated in reasonable time with a realistic branching factor, as illustrated by Figure~\ref{fig:so_program_length}.
 
@@ -109,8 +111,9 @@ The solid and dashed lines represent Massalin's superoptimizer using the Boolean
 
 GSO, the GNU superoptimizer, is described in a 1992 paper by Granlund and Kenner \cite{granlund92}.
 
-Like Massalin's superoptimizer, GSO optimizes for program length, and uses a probabilistic equivalence test.
-However, instead of executing instructions directly on the host architecture, it \emph{simulates} them using functions that operate on a virtual machine of sorts, consisting of a set of registers and a single carry bit.
+Like Massalin's superoptimizer, GSO optimizes for program length.
+It uses only a probabilistic equivalence test, and as such its output must be manually verified.
+Unlike the probabilistic test in Massalin's superoptimizer, which executes instructions directly on the host architecture, GSO's test \emph{simulates} them using functions that operate on a virtual machine of sorts, consisting of a set of registers and a single carry bit.
 GSO is therefore capable of supporting a wide range of architectures, but also requires that the input program be specified as a compiled-in \emph{goal function}.
 
 Granlund and Kenner also describe numerous methods of pruning used in GSO.
@@ -125,14 +128,14 @@ Specifically, it requires that the last instruction reads a register or the carr
 
 Denali is a superoptimizer created by Joshi et al, then at Compaq Systems Research Center, first described in a 2002 paper \cite{joshi02}.
 
-Denali's design differs greatly from that of Massalin's superoptimizer or GSO.
+Denali's design differs greatly from that of Massalin's superoptimizer and GSO.
 Rather than generating programs and then testing them, Denali starts by generating a set of programs equivalent to the input program, and then selects the optimal among them.
 
 To accomplish the first step, Denali requires a set of \emph{axioms}, which describe how instructions may be substituted for another without changing the meaning of the program.
 Such axioms may, for example, state that multiplication by $2^n$ is the same as right-shift by $n$.
 Axioms are also used to mark instructions as commutative or associative, and to specify their identity, for instance 0 for addition and 1 for multiplication.
 
-To select the optimal program, Denali rewrites the problem as a satisfaction problem, which is handed off to an external SAT solver.
+To select the optimal program, Denali rewrites the problem as a satisfiability problem, which is handed off to an external SAT solver.
 
 The authors claim that Denali is capable of optimizing for \emph{execution time}, that is, the number of cycles required for the program to terminate.
 This is remarkable, as determining the execution time for a program is more complicated than it may seem.
@@ -151,10 +154,9 @@ Its output is not an optimized program, but rather the optimizations discovered.
 In this way, Bansal's superoptimizer is capable of autonomously generating a very large library of optimizations, which can then be used by an ordinary peephole optimizer.
 
 Since output is required to be correct, optimizations are verified by a Boolean test performed by a SAT solver.
-To improve speed, candidate optimizations are first screened by a probabilistic test similar to that found in Massalin's superoptimizer or GSO.
+To improve speed, candidate optimizations are first screened by a probabilistic test similar to that found in Massalin's superoptimizer and GSO.
 
-Other notable features of Bansal's superoptimizer is that it is capable of optimizing both for execution time and for program size.
-It also utilizes a meet-in-the-middle method of pruning, in which instructions are prohibited from overwriting values required at program termination.
+Other notable features of Bansal's superoptimizer is that it is capable of optimizing both for execution time and for program size, and that it utilizes a meet-in-the-middle method of pruning, in which instructions are prohibited from overwriting values required at program termination.
 
 \subsection{TOAST}
 
@@ -188,7 +190,7 @@ Bryant also further explored the idea of representing multiple functions in a si
 A BDD with all these characteristics, a \emph{shared reduced ordered BDD} (SROBDD), has the added benefits of being memory efficient, and of allowing an isomorphism test to be implemented as a single pointer comparison.
 
 Bryant showed that the variable ordering used can have a dramatic effect on the number of nodes in a BDD, which in the best case is linear in the number of variables, and in the worst case exponential.
-Bryant states that finding the variable ordering that minimizes the number of nodes is a NP-complete problem.
+Bryant states that finding the variable ordering that minimizes the number of nodes is an NP-complete problem.
 Bollig and Wegener \cite{bollig96} would later show that even improving on an existing ordering is a NP-complete problem.
 
 % asserts that for many problems, good order can be selected by human with domain knowledge
