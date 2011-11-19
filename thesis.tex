@@ -13,6 +13,14 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning}
 
+\usepackage{clrscode3e}
+\renewcommand{\gets}{\leftarrow}
+
+\newcommand{\AND}{}
+\newcommand{\IOR}{+}
+\newcommand{\XOR}{\oplus}
+\newcommand{\NOT}{-}
+
 \title{Using binary decision diagrams to determine program equivalence in a superoptimizer}
 \subtitle{}
 \foreigntitle{Att använda binära beslutsdiagram för att avgöra ekvivalens mellan program i en superoptimerare}
@@ -203,8 +211,8 @@ To illustrate how a moderately complex Boolean function can be represented by a 
 $$
   c_k = \left\{
   \begin{array}{ll}
-    a_k b_k                             & k = 0 \\
-    a_k b_k + a_k c_{k-1} + b_k c_{k-1} & 0 < k < n \\
+    a_k \AND b_k                                             & k = 0 \\
+    a_k \AND b_k \IOR a_k \AND c_{k-1} \IOR b_k \AND c_{k-1} & 0 < k < n \\
   \end{array}\right.
 $$
 
@@ -343,34 +351,49 @@ The flags are functions rather than variables.
 
 The parity, sign and zero flags are defined in the same way for all instructions:
 
-\begin{verbatim}
-pf = !(a[0] ^ a[1] ^ a[2] ^ a[3] ^ a[4] ^ a[5] ^ a[6] ^ a[7])
-sf = a[31]
-zf = !(a[0] | a[1] | ... | a[31])
-\end{verbatim}
+\begin{codebox}
+\Procname{$\proc{pf}(a)$}
+\zi $\id{pf} \gets \NOT(a_0 \XOR a_1 \XOR ... \XOR a_7)$
+\end{codebox}
+
+\begin{codebox}
+\Procname{$\proc{sf}(a)$}
+\zi $\id{sf} \gets a_{n-1}$
+\end{codebox}
+
+\begin{codebox}
+\Procname{$\proc{zf}(a)$}
+\zi $\id{zf} \gets \NOT(a_0 \IOR a_1 \IOR ... \IOR a_{n-1})$
+\end{codebox}
 
 \subsection{Flag control}
 
-The simplest instructions supported by the superoptimizer are the flag control instructions \emph{stc}, \emph{clc} and \emph{cmc}.
+The simplest instructions supported by the superoptimizer are the flag control instructions \proc{stc}, \proc{clc} and \proc{cmc}.
 
 \subsection{Data transfer}
 
 The superoptimizer supports conditional and unconditional data transfer.
-The \emph{mov} instruction is used for the latter, and is implemented as follows:
+The \proc{mov} instruction is used for the latter, and is implemented as follows:
 
-\begin{verbatim}
-for i = 0 to 31
-    a[i] = b[i]
-\end{verbatim}
+\begin{codebox}
+\Procname{$\proc{mov}(a,b)$}
+\zi \For $i \gets 0$ \To $n-1$
+\zi \Do
+      $a_i \gets b_i$
+    \End
+\end{codebox}
 
-The \emph{cmov} instructions are used for conditional data transfer.
-There are 30 \emph{cmov} instructions in the x86 instruction set, but only 16 with unique behavior.
+The \proc{cmov} instructions are used for conditional data transfer.
+There are 30 \proc{cmov} instructions in the x86 instruction set, but only 16 with unique behavior.
 They are all implemented as follows:
 
-\begin{verbatim}
-for i = 0 to 31
-    a[i] = !condition & a[i] | condition & b[i]
-\end{verbatim}
+\begin{codebox}
+\Procname{$\proc{cmov}(a,b)$}
+\zi \For $i \gets 0$ \To $n-1$
+\zi \Do
+      $a_i \gets \NOT c \AND a_i \IOR c \AND b_i$
+    \End
+\end{codebox}
 
 % cmovc
 % cmovo
@@ -409,52 +432,64 @@ for i = 0 to 31
 
 \subsection{Logic}
 
-The supported instructions for bitwise logic are \emph{and}, \emph{or}, \emph{xor} and \emph{not}.
+The supported instructions for bitwise logic are \proc{and}, \proc{or}, \proc{xor} and \proc{not}.
 They are all simple, since each bit in the result depends only on the corresponding bit in the inputs.
 
-\emph{and} is implemented as follows:
+\proc{and} is implemented as follows:
 
-\begin{verbatim}
-for i = 0 to 31
-    a[i] = a[i] & b[i]
-\end{verbatim}
+\begin{codebox}
+\Procname{$\proc{and}(a,b)$}
+\zi \For $i \gets 0$ \To $n-1$
+\zi \Do
+      $a_i \gets a_i \AND b_i$
+    \End
+\end{codebox}
 
-\emph{or} and \emph{xor} are implemented similarly.
+\proc{or} and \proc{xor} are implemented similarly.
 
-\emph{not} is implemented as follows:
+\proc{not} is implemented as follows:
 
-\begin{verbatim}
-for i = 0 to 31
-    a[i] = !a[i]
-\end{verbatim}
+\begin{codebox}
+\Procname{$\proc{not}(a,b)$}
+\zi \For $i \gets 0$ \To $n-1$
+\zi \Do
+      $a_i \gets \NOT a_i$
+    \End
+\end{codebox}
 
 \subsection{Addition and subtraction}
 
-The \emph{add}, \emph{adc}, \emph{sub}, \emph{sbb}, \emph{cmp}, \emph{inc}, \emph{dec} and \emph{neg} instructions are all variants of addition.
+The \proc{add}, \proc{adc}, \proc{sub}, \proc{sbb}, \proc{cmp}, \proc{inc}, \proc{dec} and \proc{neg} instructions are all variants of addition.
 
-\emph{add} is implemented as follows:
+\proc{add} is implemented as follows:
 
-\begin{verbatim}
-c[0] = a[0] & b[0]
-a[0] = a[0] ^ b[0]
-for i = 1 to 31
-    c[i] = a[i] & b[i] | a[i] & c[i-1] | b[i] & c[i-1]
-    a[i] = a[i] ^ b[i] ^ c[i-1]
-cf = c[31]
-of = c[30] ^ c[31]
-\end{verbatim}
+\begin{codebox}
+\Procname{$\proc{add}(a,b)$}
+\zi $c_0 \gets a_0 \AND b_0$
+\zi $a_0 \gets a_0 \XOR b_0$
+\zi \For $i \gets 1$ \To $n-1$
+\zi \Do
+      $c_i \gets a_i \AND b_i \IOR a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $a_i \gets a_i \XOR b_i \XOR c_{i-1}$
+    \End
+\end{codebox}
 
-For \emph{adc} and \emph{sbb}, \emph{cf} is taken into account when \emph{c0} and \emph{a0} are set.
-For \emph{sub} and \emph{sbb}, the two's complement of \emph{b} is used.
-\emph{cmp} behaves like \emph{sub}, except it does not modify \emph{a}.
-\emph{inc} and \emph{dec} behave like \emph{add} and \emph{sub}, with fixed values for \emph{b}.
+\begin{codebox}
+\zi $\id{cf} \gets c_{n-1}$
+\zi $\id{of} \gets c_{n-1} \XOR c_{n-2}$
+\end{codebox}
 
-\emph{neg} behaves like \emph{inc}, with the values for \emph{a} inverted.
-Further, it sets the carry flag if \emph{a} is non-zero:
+For \proc{adc} and \proc{sbb}, \id{cf} is taken into account when \id{c_0} and \id{a_0} are set.
+For \proc{sub} and \proc{sbb}, the two's complement of \id{b} is used.
+\proc{cmp} behaves like \proc{sub}, except it does not modify \id{a}.
+\proc{inc} and \proc{dec} behave like \proc{add} and \proc{sub}, with fixed values for \id{b}.
 
-\begin{verbatim}
-cf = a[0] | a[1] | ... | a[31]
-\end{verbatim}
+\proc{neg} behaves like \proc{inc}, with the values for \id{a} inverted.
+Further, it sets the carry flag if a is non-zero:
+
+\begin{codebox}
+\zi $\id{cf} \gets a_0 + a_1 + ... + a_{n-1}$
+\end{codebox}
 
 \bibliographystyle{ieeetr}
 \bibliography{thesis}
