@@ -87,7 +87,7 @@ Chapter~\ref{ch:design} describes the superoptimizer implemented for this thesis
 
 \subsection{Massalin's superoptimizer}
 
-The term \emph{superoptimizer} was coined by Massalin in a 1987 paper \cite{massalin87}, to describe a tool for finding the shortest straight-line program that computes a given function. % explain that straight-line means loop-free and branch-free?
+The term \emph{superoptimizer} was coined by Massalin in a 1987 paper \cite{massalin87}, to describe a tool for finding the shortest straight-line program that computes a given function.
 
 Massalin's implementation takes as its input a program written in assembly language for the Motorola 68020 processor.
 It then consults a table containing a subset of the processor's instruction set, and begins generating all combinations of these instructions, beginning with those of length 1, then 2, and so on.
@@ -98,18 +98,17 @@ Because programs are tested in order of increasing length, this program will nec
 Naturally, exhaustively searching the space of all possible programs is a very inefficient process, considering that the number of programs of length $n$ is $b^n$, where $b$ is the \emph{branching factor} of the search tree.
 To find a value of $b$, consider an architecture with $r$ registers, and an instruction set consisting of $i_0$ instructions that take no arguments, $i_1$ instructions that take one argument, and $i_2$ instructions that take two arguments.
 For this architecture, the branching factor would be, in the worst case, $i_0+i_1r+i_2r^2$.
-Even for modest values of $i_0$, $i_1$, $i_2$ and $r$, the branching factor ends up in the hundreds or thousands.
+Even for modest values of $i_0$, $i_1$, $i_2$ and $r$, the branching factor would end up in the hundreds or thousands.
 Hence, a naive superoptimizer is only capable of generating very short programs in reasonable time.
 
-To address this, Massalin's superoptimizer has a method of \emph{pruning} the search tree.
-The method exploits the fact that when optimizing for program length, an optimal sequence must not contain any non-optimal subsequences.
-Hence, a program which contains a known non-optimal subsequence can be rejected without being tested.
-The implementation consists of $m$-dimensional lookup tables, where $m$ is the length of the subsequence.
+To address this, Massalin describes a method of \emph{pruning} the search tree.
+Using this method, the superoptimizer keeps a lookup table, where short instruction sequences known to be non-optimal are marked as such.
+When a program is found to contain a non-optimal instruction sequence, it is rejected without being tested.
 
 Massalin also describes two methods of determining whether a candidate program is equivalent to the input program.
 
 The first method, referred to as the \emph{Boolean test}, is to express both programs in Boolean logic, reduce them to an unspecified canonical form, and compare them minterm for minterm.
-Using this method, Massalin's superoptimizer is capable of testing 40 programs per second, when running on a 16 MHz processor.
+Using this method, Massalin's superoptimizer is capable of testing 40 programs of an unspecified length per second, when running on a 16 MHz processor.
 
 The second method, referred to as the \emph{probabilistic test}, is to simply execute both programs with identical input, and compare their output.
 This method is significantly faster, allowing the superoptimizer to test 50000 programs per second.
@@ -117,14 +116,14 @@ However, it introduces the risk of false positives, in the form of programs that
 Hence, manual verification of the output is required.
 Further, whereas the Boolean test can be used on any kind of program, Massalin's probabilistic test can only be used on programs written in the assembly language of the host architecture.
 
-% massalin claims probabilistic test sufficient
-
 It is worth noting, that even with such a significant increase in speed, only slightly longer programs may be generated in reasonable time with a realistic branching factor, as illustrated by Figure~\ref{fig:so_program_length}.
+
+% stress this
 
 \begin{figure}
 \centering
 \include{so_program_length}
-\caption{The maximum length of a program generated in 24 hours, as a function of the branching factor. % clarify
+\caption{The maximum length of a program generated in 24 hours, as a function of the branching factor.
 The solid and dashed lines represent Massalin's superoptimizer using the Boolean and probabilistic tests, respectively.}
 \label{fig:so_program_length}
 \end{figure}
@@ -134,17 +133,17 @@ The solid and dashed lines represent Massalin's superoptimizer using the Boolean
 GSO, the GNU superoptimizer, is described in a 1992 paper by Granlund and Kenner \cite{granlund92}.
 
 Like Massalin's superoptimizer, GSO optimizes for program length.
-It uses only a probabilistic equivalence test, and as such its output must be manually verified.
+It uses a probabilistic equivalence test, and as such its output must be manually verified.
 Unlike the probabilistic test in Massalin's superoptimizer, which executes instructions directly on the host architecture, GSO's test \emph{simulates} them using functions that operate on a virtual machine of sorts, consisting of a set of registers and a single carry bit.
 GSO is therefore capable of supporting a wide range of architectures, but also requires that the input program be specified as a compiled-in \emph{goal function}.
 
 Granlund and Kenner also describe numerous methods of pruning used in GSO.
 When selecting arguments for generated instructions, GSO only considers live registers, that is, registers that contain input values or have previously been written to.
 Similarly, instructions that read the carry flag are only generated after it has been set.
-For commutative instructions, which exist on some architectures, only one argument ordering is tried.
+For commutative instructions, that is, instructions for which arguments can be ordered in different ways without changing the meaning of the instruction, only one argument ordering is tried.
 
 When generating the last instruction in a program, GSO is even more restrictive.
-Specifically, it requires that the last instruction reads a register or the carry flag written to by the preceding instruction, which would otherwise be superfluous.
+Specifically, it requires that the last instruction reads a register or the carry flag written to by the preceding instruction, since that instruction would otherwise be superfluous.
 
 \subsection{Denali}
 
@@ -178,7 +177,10 @@ In this way, Bansal's superoptimizer is capable of autonomously generating a ver
 Since output is required to be correct, optimizations are verified by a Boolean test performed by a SAT solver.
 To improve speed, candidate optimizations are first screened by a probabilistic test similar to that found in Massalin's superoptimizer and GSO.
 
-Other notable features of Bansal's superoptimizer is that it is capable of optimizing both for execution time and for program size, and that it utilizes a meet-in-the-middle method of pruning, in which instructions are prohibited from overwriting values required at program termination.
+% no numbers given?
+
+Other notable features of Bansal's superoptimizer is that it is capable of optimizing both for execution time and for program size, and that it utilizes a meet-in-the-middle method of pruning.
+Using this method, the superoptimizer searches not only \emph{forwards} for progressively longer programs, but also \emph{backwards} from the state the architecture is required to be in following correct program execution.
 
 \subsection{TOAST}
 
@@ -193,9 +195,12 @@ Like Denali and Bansal's superoptimizer, it produces provably correct output.
 
 \section{Binary decision diagrams}
 
-\emph{Binary decision diagrams} (BDDs) are data structures used to efficiently represent Boolean functions.
+\emph{Binary decision diagrams} (BDDs) are data structures used to represent Boolean functions.
 They consist of nodes, representing the function's variables. Each node has one or more incoming paths, and exactly two outgoing paths, commonly referred to as the \emph{high} and \emph{low} path.
 When using a BDD to determine the value of a Boolean function, one follows a node's high path if its variable is 1, and its low path if its variable is 0, starting at the root node, until one arrives at a terminal node.
+
+There are many types of BDDs, of which some can be used to store and manipulate Boolean functions very efficiently.
+However, the performance of the operations performed on a BDD, varies greatly depending on the function represented, and the order in which its variables are indexed.
 
 BDDs were introduced by Lee \cite{lee59}, under the name \emph{binary-decision programs}.
 They were given their current name by Akers \cite{akers78}, who also explored the ideas of \emph{reducing} BDDs by removing redundant nodes, and of representing multiple functions in a single BDD.
@@ -213,14 +218,23 @@ A BDD with all these characteristics, a \emph{shared reduced ordered BDD} (SROBD
 
 Bryant showed that the variable ordering used can have a dramatic effect on the number of nodes in a BDD, which in the best case is linear in the number of variables, and in the worst case exponential.
 Bryant states that finding the variable ordering that minimizes the number of nodes is an NP-complete problem.
-Bollig and Wegener \cite{bollig96} would later show that even improving on an existing ordering is a NP-complete problem.
+Bollig and Wegener \cite{bollig96} would later show that even determining whether an ordering exists for which the number of nodes is at most a given value, is an NP-complete problem.
 
-% asserts that for many problems, good order can be selected by human with domain knowledge
-% however, functions exists (e.g. multiplication) that require an exponential number of nodes regardless of ordering
+Bryant asserts that for many functions, a good variable ordering can be determined by examining the structure of the functions.
+As an example, he mentions that for functions in which variables primarily interact pairwise, ordering variables and their partners consecutively gives good results.
+
+However, Bryant also states that there are functions that can only be represented using a number of nodes exponential in the number of variables, regardless of variable ordering, and proves that integer multiplication is such a function.
+
+% lower bounds given by Bollig and Wegener
 
 \subsection{Example}
 
-To illustrate how a moderately complex Boolean function can be represented by a BDD, consider a class of functions with $2n$ variables labeled $a_0,...,a_{n-1},b_0,...,b_{n-1}$, defined recursively as follows:
+To illustrate how a moderately complex Boolean function can be represented by a BDD, consider an adder that takes two $n$-bit numbers, $a$ and $b$, and produces their sum, as well a carry-out bit.
+
+To express the adder in Boolean logic, we represent $a$ as $n$ Boolean variables $\langle a_0, a_1, ..., a_{n-1} \rangle$, where $a_0$ and $a_{n-1}$ are the least and most significant bits of $a$, respectively.
+Doing the same for $b$, we get a total of $2n$ variables.
+
+The function for the carry-out bit, $c_{n-1}$, depends on every variable, and can be defined recursively as follows:
 
 $$
   c_k = \left\{
@@ -230,10 +244,15 @@ $$
   \end{array}\right.
 $$
 
-$c_{n-1}$ is the function for the carry-out bit of an $n$-bit adder with no carry-in, taking $a$ and $b$ as its two inputs.
-Its truth table is listed in Table~\ref{tab:tt_c1}, and it is shown in OBDD and ROBDD form in Figure~\ref{fig:bdd_c1}, using the variable ordering $a_0,b_0,...,a_{n-1},b_{n-1}$.
-If we instead use the variable ordering $a_0,...,a_{n-1},b_0,...,b_{n-1}$, we end up with a larger ROBDD, as illustrated in Figure~\ref{fig:bdd_c2_bad}.
-For this particular function, and these two variable orderings, the number of nodes required is:
+For $n = 2$, $c_1$ can be represented as the truth table shown in Table~\ref{tab:tt_c1}, or, using the variable ordering $a_0,b_0,...,a_{n-1},b_{n-1}$, as an OBDD or ROBDD as shown in Figure~\ref{fig:bdd_c1}.
+Note that the ROBDD representation is quite compact, and that not all variables are present on every path.
+For instance, if $a_0$ is 0, there is no need to check $b_0$, and we instead skip ahead to $a_1$.
+
+Not all variable orderings produce such compact ROBDDs for this function, however.
+If we instead use the variable ordering $a_0,...,a_{n-1},b_0,...,b_{n-1}$, we end up with a larger ROBDD.
+This becomes more clear for larger values of $n$, as illustrated in Figure~\ref{fig:bdd_c2_bad}.
+
+Upon inspection, we find that in the ROBDD representation of this particular function, using these two variable orderings, the number of nodes is:
 
 $$
   |c_{n-1}| = \left\{
@@ -243,7 +262,9 @@ $$
   \end{array}\right.
 $$
 
-For $n = 32$, the BDD would consequently contain only 97 nodes with the first variable ordering, but over 8 billion with the second.
+For $n = 32$, the ROBDD would consequently contain only 97 nodes with the first variable ordering, but over 8 billion with the second.
+
+Note that Bryant's suggested method of ordering interacting variables consecutively, works very well in this case.
 
 \begin{table}
 \centering
@@ -271,14 +292,14 @@ $a_0$ & $b_0$ & $a_1$ & $b_1$ & $c_0$ & $c_1$ \\
 \label{tab:tt_c1}
 \end{table}
 
-\begin{figure}
+\begin{figure}[p]
 \centering
 \include{bdd_c1}
 \caption{The Boolean function $c_1$ as an OBDD (left) and an ROBDD (right). The solid lines represent high paths and the dashed lines represent low paths.}
 \label{fig:bdd_c1}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[p]
 \centering
 \include{bdd_c2_bad}
 \caption{The Boolean function $c_2$ in ROBDD form using the variable order $a_0,a_1,a_2,b_0,b_1,b_2$ (left) and $a_0,b_0,a_1,b_1,a_2,b_2$ (right).}
