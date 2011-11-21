@@ -60,15 +60,25 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-This thesis explores using \emph{binary decision diagrams} (BDDs) to determine whether two programs are \emph{equivalent}, that is, whether they always yield identical output given identical and valid input, within the context of a \emph{superoptimizer}.
+In the context of compiler technology, an \emph{optimizer} is a tool that attempts to improve the resource usage of programs.
+Typically, an optimizer takes a program and transforms it using heuristics designed, for instance, to reduce execution time or memory usage.
+Despite its name, however, an optimizer rarely makes a program \emph{optimal}.
 
-Chapter~\ref{ch:background} describes both superoptimizers and BDDs in detail, and summarizes their history.
+A \emph{superoptimizer} takes a different approach.
+Given a description of a function, it attempts to find, typically using some type of exhaustive search, the fastest or shortest program that computes that function.
+In this way, a superoptimizer can generate programs that are indeed optimal, although with some rather strict limitations.
 
-Chapter~\ref{ch:design} describes the superoptimizer implemented for this thesis project.
+First, due to the inefficient nature of exhaustive search, a superoptimizer can only generate very short programs, no longer than perhaps 5 or 6 instructions, in reasonable time.
+Second, a superoptimizer can only generate \emph{straight-line} programs, that is, programs that contain no loops, branches or other jumps.
 
-Chapter~\ref{ch:results} ...
+Despite this, superoptimizers can be useful for optimizing inner loops and other small sequences of code required to be fast or small.
 
-Chapter~\ref{ch:recommendations} ...
+A crucial capability of a superoptimizers, is the ability to determine if a found program and the input function are \emph{equivalent}, meaning that they always yield identical output given identical and valid input.
+This thesis explores using \emph{binary decision diagrams} (BDDs), data structures capable of efficiently representing Boolean functions, for this purpose.
+
+Chapter~\ref{ch:background} describes both superoptimizers and BDDs, and summarizes their history.
+
+Chapter~\ref{ch:design} describes the superoptimizer implemented for this thesis project, and its method of determining program equivalence.
 
 \chapter{Background}
 \label{ch:background}
