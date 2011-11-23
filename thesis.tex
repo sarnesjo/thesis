@@ -76,9 +76,13 @@ Despite this, superoptimizers can be useful for optimizing inner loops and other
 A crucial capability of a superoptimizers, is the ability to determine if a found program and the input function are \emph{equivalent}, meaning that they always yield identical output given identical and valid input.
 This thesis explores using \emph{binary decision diagrams} (BDDs), data structures capable of efficiently representing Boolean functions, for this purpose.
 
-Chapter~\ref{ch:background} describes both superoptimizers and BDDs, and summarizes their history.
+% overview of thesis
 
-Chapter~\ref{ch:design} describes the superoptimizer implemented for this thesis project, and its method of determining program equivalence.
+Chapter~\ref{ch:background}
+
+Chapter~\ref{ch:architecture}
+
+Chapter~\ref{ch:operation}
 
 \chapter{Background}
 \label{ch:background}
@@ -306,16 +310,8 @@ $a_0$ & $b_0$ & $a_1$ & $b_1$ & $c_0$ & $c_1$ \\
 \label{fig:bdd_c2_bad}
 \end{figure}
 
-\chapter{Design}
-\label{ch:design}
-
-As a framework for exploring the use of BDDs to determine program equivalence, I developed a simple superoptimizer.
-Its implementation consists of roughly 2000 lines of C and C++ code, as well as a test suite created to aid development.
-Its design is inspired primarily by GSO.
-Since my focus was on equivalence testing, the other aspects of the design were mostly kept simple.
-It optimizes for program length.
-
-\section{Architecture}
+\chapter{Architecture}
+\label{ch:architecture}
 
 The architecture of the superoptimizer's virtual machine is modeled after the x86, as described by the manuals issued by Intel Corporation \cite{intel_1,intel_2a,intel_2b}. % AMD?
 The machine state consists of 8 32-bit registers and 5 flag bits.
@@ -324,12 +320,15 @@ The \emph{parity flag} (PF) is set when an even number of the least significant 
 The \emph{sign flag} (SF) is set equal to the most significant bit of the result.
 The \emph{zero flag} (ZF) is set when the result contains no set bits.
 
-\section{Input}
+\section{Language}
 
 The superoptimizer takes as its input programs written in a small subset of the x86 assembly language, using Intel's syntax with a few modifications.
 Registers are named r0--r7, rather than eax, ebx, etc.
 Statements are terminated by semicolons rather than newlines.
 Neither immediate values nor effective addresses are supported.
+
+\section{Instruction set}
+
 Table~\ref{tab:insns} shows the supported instructions, along with their arity and behavior with regards to flags.
 
 \begin{table}
@@ -359,6 +358,16 @@ neg  & 1     & M  & M  & M  & M  & M  \\
 For the flags, 0 and 1 means that it is set to that value, M (modify) means that it is set according the result, and T (test) means that it is read.}
 \label{tab:insns}
 \end{table}
+
+\chapter{Operation}
+\label{ch:operation}
+
+Its implementation consists of roughly 2000 lines of C and C++ code, as well as a test suite created to aid development.
+Its design is inspired primarily by GSO.
+Since my focus was on equivalence testing, the other aspects of the design were mostly kept simple.
+It optimizes for program length.
+
+\section{Input}
 
 The superoptimizer analyzes the registers used in the input program.
 Any register read from before written to is considered an input register.
@@ -439,41 +448,6 @@ They are all implemented as follows:
       $a_i \gets \NOT c \AND a_i \IOR c \AND b_i$
     \End
 \end{codebox}
-
-% cmovc
-% cmovo
-% cmovp
-% cmovs
-% cmovz
-% cmovnc
-% cmovno
-% cmovnp
-% cmovns
-% cmovnz
-% cmova   above
-% cmovbe  below or equal
-% cmovg   greater
-% cmovge  greater or equal
-% cmovl   less
-% cmovle  less or equal
-
-% cmovae  above or equal=nc
-% cmovb   below=c
-% cmovna  not above=be
-% cmovnae not above or equal=c
-% cmovnb  not below=nc
-% cmovnbe not below or equal=a
-% cmovng  not greater=le
-% cmovnge not greater or equal=l
-% cmovnl  not less=ge
-% cmovnle not less or equal=g
-% cmove   equal=z
-% cmovne  not equal=zf
-% cmovpe  parity even=p
-% cmovpo  parity odd=np
-
-% above/below for unsigned
-% greater/less for signed
 
 \subsection{Logic}
 
