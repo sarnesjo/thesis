@@ -78,9 +78,9 @@ This thesis explores using \emph{binary decision diagrams} (BDDs), data structur
 
 Chapter~\ref{ch:background}
 
-Chapter~\ref{ch:architecture}
+Chapter~\ref{ch:target_architecture}
 
-Chapter~\ref{ch:operation}
+Chapter~\ref{ch:design_implementation}
 
 \chapter{Background}
 \label{ch:background}
@@ -308,8 +308,8 @@ $a_0$ & $b_0$ & $a_1$ & $b_1$ & $c_0$ & $c_1$ \\
 \label{fig:bdd_c2_bad}
 \end{figure}
 
-\chapter{Architecture}
-\label{ch:architecture}
+\chapter{Target architecture}
+\label{ch:target_architecture}
 
 The superoptimizer implemented as part of this thesis project targets the x86 architecture, as described by the manuals published by Intel Corporation \cite{intel_1,intel_2a,intel_2b}.
 
@@ -510,8 +510,8 @@ The only instruction supported by the superoptimizer is the form of \verb|imul| 
 \verb|cf| and \verb|of| are both used to indicate that the truncated result differs from the actual result, meaning that overflow has occured.
 \verb|pf|, \verb|sf| and \verb|zf|, however, are left in an \emph{undefined} state.
 
-\chapter{Operation}
-\label{ch:operation}
+\chapter{Design and implementation}
+\label{ch:design_implementation}
 
 Its implementation consists of roughly 2000 lines of C and C++ code, as well as a test suite created to aid development.
 Its design is inspired primarily by GSO.
