@@ -348,7 +348,7 @@ They are written to and read from by instructions, in general as a side effect r
 There are 17 different flags in the x86 architecture, but the superoptimizer only supports the 5 for which a corresponding \verb|cmov| instruction exists:
 the \emph{carry} (\verb|cf|), \emph{overflow} (\verb|of|), \emph{parity} (\verb|pf|), \emph{sign} (\verb|sf|) and \emph{zero} (\verb|zf|) flags.
 
-\verb|cf| and \verb|of| are used to signify that overflow has occured, meaning that the result of an operation did not fit into a single register.
+\verb|cf| and \verb|of| are used to signify that overflow has occurred, meaning that the result of an operation did not fit into a single register.
 \verb|cf| is used for unsigned arithmetic, while \verb|of| is used for signed arithmetic, but their exact meaning varies from instruction to instruction.
 
 \verb|pf|, \verb|sf| and \verb|zf| can be determined entirely by inspecting the result of an operation.
@@ -374,18 +374,10 @@ mov r0,r1; add r0,r2;
 
 \section{Instruction set}
 
-% discuss how to select insn set
-% only include worthwhile insns
-% keep insn count low = keep branching factor low
-% also, by not including slow insns, program-length optimal -> reasonably execution-time "optimal"
-% slow measured by latency, throughput
-\cite{x86_timing}
+When selecting a set of instructions for a superoptimizer to support, some care should be taken, since only including instructions which are likely to be used, can help keeping the branching factor low.
+Further, keeping in mind that some instructions take longer than others to execute on an x86 architecture \cite{x86_timing}, one might wish to avoid slower instructions, to ensure that a program optimal in terms of length, also performs reasonably well in terms of execution time.
 
-% different i/o insn sets
-
-% however, for this thesis, insns chosen for variety and to highlight strengths and weaknesses of BDD test
-
-The supported instructions are listed in Table~\ref{tab:insns}, which also gives an overview of their behavior with regards to the destination and source registers, as well as flags.
+Since the focus of this thesis project is on testing programs for equivalence, however, the set of supported instructions has been chosen to exhibit variety in terms of behavior with regards to registers and flags, and to demonstrate both the strengths and the weaknesses of the method used. The supported instructions are listed in Table~\ref{tab:insns}.
 
 \begin{table}
 \centering
@@ -430,7 +422,10 @@ instruction   & d  & s  & \verb|cf| & \verb|of| & \verb|pf| & \verb|sf| & \verb|
 \hline
 \verb|imul|   & RW & R  & W         & W         & -         & -         & -         \\
 \end{tabular}
-\caption{The instruction set of the superoptimizer.} % explain d/s, R/W/-
+\caption{The instruction set of the superoptimizer.
+The columns marked \emph{d} and \emph{s} describe the instruction's behaviour with regards to its destination and source register, respectively,
+while the columns marked \emph{cf}, \emph{of}, \emph{pf}, \emph{sf} and \emph{zf} describe its behaviour with regards to flags.
+For all columns, \emph{R} and \emph{W} mark a register or flag as read from or written to, respectively, while \emph{-} marks a flag as left in an undefined state by an instruction.} % typography
 \label{tab:insns}
 \end{table}
 
@@ -513,7 +508,7 @@ It sets \verb|cf| to 0 if its argument is 0, and 1 otherwise, and modifies the o
 The x86 instruction set contains many multiplication instructions, each with slightly different behavior.
 The only instruction supported by the superoptimizer is the form of \verb|imul| that takes two arguments and performs integer multiplication on them, truncating the result to fit into a single register.
 
-\verb|cf| and \verb|of| are both used to indicate that the truncated result differs from the actual result, meaning that overflow has occured.
+\verb|cf| and \verb|of| are both used to indicate that the truncated result differs from the actual result, meaning that overflow has occurred.
 \verb|pf|, \verb|sf| and \verb|zf|, however, are left in an \emph{undefined} state.
 
 \chapter{Design and implementation}
@@ -597,7 +592,7 @@ If should be noted, however, that neither of them are capable of correctly handl
 
 The superoptimizer uses a probabilistic test similar to the one used by GSO.
 It's implementation, written in C, represents registers by unsigned integers, flags by single bits, and instructions by functions.
-Since the instructions were generally simple enough to be implemented using a single C operator, they will not be described in further detail.
+Since the instructions are generally simple enough to be implemented using a single C operator, they will not be described in further detail.
 
 When comparing a candidate program for equivalence to the input program, two sets of registers and flags are used.
 In both, the registers are set to values taken from a hardcoded test vector, and the flags are set to 0.
@@ -615,10 +610,8 @@ Considering that programs generated by a superoptimizer are no longer than 5 or 
 
 However, this method will not work well even for programs with two input registers.
 Such a program would need to be run $2^{64}$ times, which would take several thousand years.
-
 % (2^32 * 5 * 3) / (2 GHz) = 32 seconds
 % (2^64 * 5 * 3) / (2 GHz) = 4384 years
-
 Hence, programs are tested using only a few hardcoded values, with equivalence being determined definitively by the BDD test.
 
 \subsection{BDD test}
@@ -646,6 +639,10 @@ If all are equal, the two programs are equivalent.
 In the descriptions below, a register $a$ is represented by 32 Boolean variables $\langle a_0, a_1, ..., a_{n-1} \rangle$, where $a_0$ and $a_{n-1}$ are the least and most significant bits of $a$, respectively.
 The flags are represented as $f_c$, $f_o$, $f_p$, $f_s$ and $f_z$.
 An instruction \verb|foo| is represented by a pseudocode function \proc{foo}.
+
+% variable order
+% was found to work best in experiments
+% cursory
 
 \subsubsection{Flags}
 
@@ -867,23 +864,23 @@ Once simplified, its implementation is as follows:
 \subsubsection{Multiplication}
 
 \proc{imul} is the most complex of the supported instructions.
-Its implementation uses the \emph{shift-and-add} method of multiplication, which is similar to the common method of long multiplication illustrated in Figure~\ref{fig:shift_and_add}.
+Its implementation uses the \emph{shift-and-add} method of multiplication, which is similar to the common method of long multiplication illustrated in Figure~\ref{fig:long_multiplication}.
 
 \begin{figure}
 \centering
 \begin{verbatim}
-|                             [3] [2] [1] [0] // a                  |
-|                          *  [3] [2] [1] [0] // b                  |
-|                         -------------------                       |
-|                             [ ] [ ] [ ] [ ] // a*b[0]             |
-|                         [ ] [ ] [ ] [ ]     // a*b[1]             |
-|                     [ ] [ ] [ ] [ ]         // a*b[2]             |
-|              +  [ ] [ ] [ ] [ ]             // a*b[3]             |
-|             -------------------------------                       |
-|             [7] [6] [5] [4] [3] [2] [1] [0] // a*b                |
+                              [3] [2] [1] [0] // a
+                           *  [3] [2] [1] [0] // b
+                          -------------------
+                              [ ] [ ] [ ] [ ] // a*b[0]
+                          [ ] [ ] [ ] [ ]     // a*b[1]
+                      [ ] [ ] [ ] [ ]         // a*b[2]
+               +  [ ] [ ] [ ] [ ]             // a*b[3]
+              -------------------------------
+              [7] [6] [5] [4] [3] [2] [1] [0] // p=a*b
 \end{verbatim}
-\caption{}
-\label{fig:shift_and_add}
+\caption{Long multiplication of two 4-digit numbers. TODO: create better figure.}
+\label{fig:long_multiplication}
 \end{figure}
 
 This methods works particularly well with binary or Boolean representations, since multiplication by a single digit then becomes nothing more than a logical \emph{and}.
