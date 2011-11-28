@@ -1,0 +1,5 @@
+set grid
+set xlabel "number of bits"
+set ylabel "time in seconds"
+set logscale y
+plot "performance_mul.txt" using 1:2 title "" with linespoints

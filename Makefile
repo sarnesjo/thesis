@@ -1,4 +1,4 @@
-GNUPLOT_TEX_FILES = so_program_length.tex
+GNUPLOT_TEX_FILES = so_program_length.tex performance_mul.tex
 TIKZ_TEX_FILES = bdd_c1.tex bdd_c2_bad.tex
 
 all: spec.pdf thesis.pdf
