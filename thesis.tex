@@ -371,14 +371,15 @@ and \verb|zf| that every bit of the result is 0.
 \section{Language}
 \label{s:language}
 
-Programs accepted as input or produced as output by the superoptimizer, use Intel's syntax with a few modifications.
+Programs accepted as input or produced as output by the superoptimizer, are written in assembly language, using Intel's syntax with a few modifications.
 Registers are referred to as \verb|r0| through \verb|r7|, rather than the usual names \verb|eax|, \verb|ebx|, etc.
 Statements are terminated by semicolons rather than newlines.
 
-If an instruction takes arguments, the first one specifies the \emph{destination} register, which may be read from, written to, or both.
-If an instruction takes two arguments, the second one specifies the \emph{source} register, which is only read from.
+For instructions that take one or two arguments, the first specifies the \emph{destination} register, while the second specifies the \emph{source} register.
+The instruction may read from the destination register, write to it, or do both.
+The source register, however, is only read from.
 
-As an example, a program that sets \verb|r0| to the sum of \verb|r1| and \verb|r2|, could be written as follows:
+An example of a program written in the superoptimizer's assembly language is the following, which sets \verb|r0| to the sum of \verb|r1| and \verb|r2|:
 
 \begin{verbatim}
 mov r0,r1; add r0,r2;
@@ -386,10 +387,11 @@ mov r0,r1; add r0,r2;
 
 \section{Instruction set}
 
-When selecting a set of instructions for a superoptimizer to support, some care should be taken, since only including instructions which are likely to be used can help keeping the branching factor low.
-Further, keeping in mind that some instructions take longer than others to execute on an x86 architecture \cite{x86_timing}, one might wish to avoid slower instructions, to ensure that a program optimal in terms of length, also performs well in terms of execution time.
+When selecting a set of instructions for a superoptimizer to support, some care should be taken.
+Only instructions which are likely to be used should be included, to avoid increasing the branching factor of the superoptimizer's search tree.
+Further, since some instructions take longer than others to execute on an x86 architecture \cite{x86_timing}, one might wish to avoid including slower instructions, to ensure that a program optimal in terms of length, also performs well in terms of execution time.
 
-Since the focus of this thesis project is on testing programs for equivalence, however, the set of supported instructions has been chosen to exhibit variety in terms of behavior with regards to registers and flags, and to demonstrate both the strengths and the weaknesses of the method used. The supported instructions are listed in Table~\ref{tab:insns}.
+Since the focus of this thesis project is on testing programs for equivalence, however, the set of supported instructions was chosen to exhibit variety in terms of behavior with regards to registers and flags, and to demonstrate both the strengths and the weaknesses of the method used. The supported instructions are listed in Table~\ref{tab:insns}.
 
 \begin{table}
 \centering
@@ -432,12 +434,12 @@ instruction   & d  & s  & \verb|cf| & \verb|of| & \verb|pf| & \verb|sf| & \verb|
 \verb|dec|    & RW &    &           & W         & W         & W         & W         \\
 \verb|neg|    & RW &    & W         & W         & W         & W         & W         \\
 \hline
-\verb|imul|   & RW & R  & W         & W         & -         & -         & -         \\
+\verb|imul|   & RW & R  & W         & W         & U         & U         & U         \\
 \end{tabular}
 \caption{The instruction set of the superoptimizer.
 The columns marked \emph{d} and \emph{s} describe the instruction's behaviour with regards to its destination and source register, respectively,
 while the columns marked \emph{cf}, \emph{of}, \emph{pf}, \emph{sf} and \emph{zf} describe its behaviour with regards to flags.
-\emph{R} and \emph{W} mark a register or flag as read from or written to, respectively, while ``-'' marks a flag as left in an undefined state by an instruction.} % typography
+\emph{R} and \emph{W} mark a register or flag as read from or written to, respectively, while \emph{U} marks a flag as left in an undefined state by an instruction.} % typography
 \label{tab:insns}
 \end{table}
 
@@ -450,16 +452,12 @@ These instructions do not modify registers in any way.
 
 \subsection{Data transfer instructions}
 
-The data transfer instructions copy the value of a source register to a destination register.
+The data transfer instructions copy the value of the source register to the destination register.
 \verb|mov| does so unconditionally, while the \verb|cmov| family of instructions does so only if a given condition is true, otherwise leaving the destination register unmodified.
-
-There are 30 \verb|cmov| instructions in the x86 instruction set, but many of these are duplicates, presumably created to allow assembly language programmers to more clearly express their intent.
-The superoptimizer only supports the 16 instructions with unique behavior.
+There are 16 \verb|cmov| instructions in the superoptimizer's instruction set.
 
 \verb|cmovc|, \verb|cmovo|, \verb|cmovp|, \verb|cmovs| and \verb|cmovz|, as well as \verb|cmovnc|, \verb|cmovno|, \verb|cmovnp|, \verb|cmovns| and \verb|cmovnz|, only inspect the value of a single flag, transferring data if that flag is set to an expected value.
-
-\verb|cmova|, \verb|cmovbe|, \verb|cmovg|, \verb|cmovge|, \verb|cmovl| and \verb|cmovle|, on the other hand, inspect the values of several flags.
-They can be placed following \verb|cmp| or another instruction that sets flags by comparing two values, in order to transfer data if one value is, for instance, greater or less than another.
+\verb|cmova|, \verb|cmovbe|, \verb|cmovg|, \verb|cmovge|, \verb|cmovl| and \verb|cmovle|, on the other hand, are slightly more complex, since they inspect the values of several flags, comparing them not only to expected values, but also to each other.
 
 % above/below for unsigned
 % greater/less for signed
@@ -520,7 +518,7 @@ It sets \verb|cf| to 0 if its argument is 0, and 1 otherwise, and modifies the o
 The x86 instruction set contains many multiplication instructions, each with slightly different behavior.
 The only instruction supported by the superoptimizer is the form of \verb|imul| that takes two arguments and performs integer multiplication on them, truncating the result to fit into a single register.
 
-\verb|cf| and \verb|of| are both used to indicate that the truncated result differs from the actual result, meaning that overflow has occurred.
+\verb|cf| and \verb|of| are both used to indicate that the result of the multiplication did not fit into a single register prior to being truncated, meaning that overflow has occurred.
 \verb|pf|, \verb|sf| and \verb|zf|, however, are left in an \emph{undefined} state.
 
 \chapter{Design and implementation of the superoptimizer}
