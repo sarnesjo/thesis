@@ -1,8 +1,11 @@
 *.swp
 .DS_Store
+bdd_add1.aux
+bdd_add2.aux
 bdd_c1.aux
 bdd_c2_bad.aux
 gnuplot-lua-tikz.sty
+long_multiplication.aux
 performance_mul.aux
 performance_mul.tex
 so_program_length.aux

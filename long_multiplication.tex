@@ -1,0 +1,59 @@
+\begin{tikzpicture}
+[every node/.style={minimum width=8mm,minimum height=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
+ box/.style={draw=black,rectangle}]
+
+\node[box] (a0)                                {$a_0$};
+\node[box] (a1)   [on grid,left=8mm of a0]     {$a_1$};
+\node[box] (a2)   [on grid,left=8mm of a1]     {$a_2$};
+\node[box] (a3)   [on grid,left=8mm of a2]     {$a_3$};
+
+\node[box] (b0)   [on grid,below=6mm of a0]    {$b_0$};
+\node[box] (b1)   [on grid,left=8mm of b0]     {$b_1$};
+\node[box] (b2)   [on grid,left=8mm of b1]     {$b_2$};
+\node[box] (b3)   [on grid,left=8mm of b2]     {$b_3$};
+
+\node             [on grid,left=8mm of b3]     {$\times$};
+
+\node[box] (a0b0) [on grid,below=8mm of b0]    {$a_0b_0$};
+\node[box] (a1b0) [on grid,left=8mm of a0b0]   {$a_1b_0$};
+\node[box] (a2b0) [on grid,left=8mm of a1b0]   {$a_2b_0$};
+\node[box] (a3b0) [on grid,left=8mm of a2b0]   {$a_3b_0$};
+
+\node[box] (a0b1) [on grid,below=6mm of a1b0]  {$a_0b_1$};
+\node[box] (a1b1) [on grid,left=8mm of a0b1]   {$a_1b_1$};
+\node[box] (a2b1) [on grid,left=8mm of a1b1]   {$a_2b_1$};
+\node[box] (a3b1) [on grid,left=8mm of a2b1]   {$a_3b_1$};
+
+\node[box] (a0b2) [on grid,below=6mm of a1b1]  {$a_0b_2$};
+\node[box] (a1b2) [on grid,left=8mm of a0b2]   {$a_1b_2$};
+\node[box] (a2b2) [on grid,left=8mm of a1b2]   {$a_2b_2$};
+\node[box] (a3b2) [on grid,left=8mm of a2b2]   {$a_3b_2$};
+
+\node[box] (a0b3) [on grid,below=6mm of a1b2]  {$a_0b_3$};
+\node[box] (a1b3) [on grid,left=8mm of a0b3]   {$a_1b_3$};
+\node[box] (a2b3) [on grid,left=8mm of a1b3]   {$a_2b_3$};
+\node[box] (a3b3) [on grid,left=8mm of a2b3]   {$a_3b_3$};
+
+\node             [on grid,left=8mm of a3b3]   {$+$};
+
+\node[box] (p0)   [on grid,below=26mm of a0b0] {$p_0$};
+\node[box] (p1)   [on grid,left=8mm of p0]     {$p_1$};
+\node[box] (p2)   [on grid,left=8mm of p1]     {$p_2$};
+\node[box] (p3)   [on grid,left=8mm of p2]     {$p_3$};
+\node[box] (p4)   [on grid,left=8mm of p3]     {$p_4$};
+\node[box] (p5)   [on grid,left=8mm of p4]     {$p_5$};
+\node[box] (p6)   [on grid,left=8mm of p5]     {$p_6$};
+\node[box] (p7)   [on grid,left=8mm of p6]     {$p_7$};
+
+%\node      (a)    [on grid,right=12mm of a0]   {$a$};
+%\node      (b)    [on grid,below=6mm of a]     {$b$};
+%\node      (ab0)  [on grid,right=12mm of a0b0] {$ab_0$};
+%\node      (ab1)  [on grid,below=6mm of ab0]   {$ab_1$};
+%\node      (ab2)  [on grid,below=6mm of ab1]   {$ab_2$};
+%\node      (ab3)  [on grid,below=6mm of ab2]   {$ab_3$};
+%\node      (p)    [on grid,right=12mm of p0]   {$p=ab$};
+
+\draw[thick] (4mm,-10mm) -- (-36mm,-10mm);
+\draw[thick] (4mm,-36mm) -- (-60mm,-36mm);
+
+\end{tikzpicture}

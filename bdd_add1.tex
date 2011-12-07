@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+[every node/.style={draw=black,thick,minimum size=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
+ var/.style={circle},
+ val/.style={rectangle},
+ ref/.style={rectangle,white,draw=gray,fill=gray},
+ thick]
+
+\node[var] (a0)  [on grid]                                   {$a_0$};
+\node[var] (a1) [on grid,right=12mm of a0]  {$a_1$};
+
+\node[val] (0)     [on grid,below=8mm of a0]               {0};
+\node[val] (1)     [on grid,below=8mm of a1]                {1};
+
+\path[dashed] (a0) edge (0);
+\path         (a0) edge (1);
+\path[dashed] (a1) edge (0);
+\path         (a1) edge (1);
+
+\node[ref] (Ra0) [on grid,above left=8mm and 8mm of a0] {$a'_0$};
+\node[ref] (Ra1) [on grid,above left=8mm and 8mm of a1] {$a'_1$};
+%\node[ref] (Rfc) [on grid,above left=8mm and 8mm of 0] {$f_c$};
+
+\path[->,gray,very thick] (Ra0) edge (a0);
+\path[->,gray,very thick] (Ra1) edge (a1);
+%\path[->,gray,very thick] (Rfc) edge (0);
+
+\end{tikzpicture}

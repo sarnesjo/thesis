@@ -1,0 +1,66 @@
+\begin{tikzpicture}
+[every node/.style={draw=black,thick,minimum size=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
+ var/.style={circle},
+ val/.style={rectangle},
+ ref/.style={rectangle,white,draw=gray,fill=gray},
+ thick]
+
+% a0-out
+\node[var] (A0a0)  [on grid]                                   {$a_0$};
+\node[var] (A0b0A) [on grid,below  left=8mm and 12mm of A0a0]  {$b_0$};
+\node[var] (A0b0B) [on grid,below right=8mm and 12mm of A0a0]  {$b_0$};
+
+% fc
+\node[var] (FCa0)  [on grid,right=24mm of A0a0]                {$a_0$};
+\node[var] (FCb0)  [on grid,below right=8mm and 12mm of FCa0]  {$b_0$};
+\node[var] (FCa1A) [on grid,below  left=8mm and 12mm of FCb0]  {$a_1$};
+\node[var] (FCa1B) [on grid,below right=8mm and 12mm of FCb0]  {$a_1$};
+
+% a1-out
+\node[var] (A1a0)  [on grid,right=48mm of FCa0]                {$a_0$};
+\node[var] (A1b0)  [on grid,below right=8mm and 12mm of A1a0]  {$b_0$};
+\node[var] (A1a1A) [on grid,below  left=8mm and 12mm of A1b0]  {$a_1$};
+\node[var] (A1a1B) [on grid,below right=8mm and 12mm of A1b0]  {$a_1$};
+\node[var] (A1b1A) [on grid,below  left=8mm and 12mm of A1a1A] {$b_1$};
+\node[var] (A1b1B) [on grid,below right=8mm and 12mm of A1a1A] {$b_1$};
+
+\node[val] (0)     [on grid,below=16mm of FCa1A]               {0};
+\node[val] (1)     [on grid,below=8mm of A1b1A]                {1};
+
+\path[dashed] (A0a0)  edge (A0b0A);
+\path         (A0a0)  edge (A0b0B);
+\path[dashed] (A0b0A) edge (0);
+\path[]         (A0b0A) edge (1);
+\path[bend right,dashed] (A0b0B) edge (1);
+\path[]         (A0b0B) edge (0);
+
+\path[dashed] (A1a0)  edge (A1a1A);
+\path         (A1a0)  edge (A1b0);
+\path[dashed] (A1a1A) edge (A1b1A);
+\path         (A1a1A) edge (A1b1B);
+\path[dashed] (A1a1B) edge (A1b1B);
+\path         (A1a1B) edge (A1b1A);
+\path[dashed] (A1b0)  edge (A1a1A);
+\path         (A1b0)  edge (A1a1B);
+\path[dashed] (A1b1A) edge (0);
+\path         (A1b1A) edge (1);
+\path[dashed] (A1b1B) edge (1);
+\path         (A1b1B) edge (0);
+\path[dashed] (FCa0)  edge (FCa1A);
+\path         (FCa0)  edge (FCb0);
+\path[dashed] (FCa1A) edge (0);
+\path         (FCa1A) edge (A1b1A);
+\path[dashed] (FCa1B) edge (A1b1A);
+\path[]         (FCa1B) edge (1);
+\path[dashed] (FCb0)  edge (FCa1A);
+\path         (FCb0)  edge (FCa1B);
+
+\node[ref] (Ra0) [on grid,above left=8mm and 8mm of A0a0] {$a'_0$};
+\node[ref] (Ra1) [on grid,above left=8mm and 8mm of A1a0] {$a'_1$};
+\node[ref] (Rfc) [on grid,above left=8mm and 8mm of FCa0] {$f_c$};
+
+\path[->,gray,very thick] (Ra0) edge (A0a0);
+\path[->,gray,very thick] (Ra1) edge (A1a0);
+\path[->,gray,very thick] (Rfc) edge (FCa0);
+
+\end{tikzpicture}
