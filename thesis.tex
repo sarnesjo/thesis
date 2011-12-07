@@ -1209,23 +1209,23 @@ making support for 32-bit multiplication instructions impossible in practical te
 \chapter{Recommendations and future work}
 \label{ch:recommendations_future_work}
 
-It is hard to give an unconditional recommendation of the method of using BDDs to determine program equivalence described in this thesis, due to its poor performance when handling multiplication and similar instructions.
+While the method of using BDDs to determine program equivalence described in this thesis works very well for many programs, it performs poorly for programs containing multiplication instructions.
+For this reason, it is hard to give it an unconditional recommendation.
 
 The performance could perhaps be improved by replacing the shift-and-add implementation of the multiplication instruction with a more efficient algorithm.
-While the resulting SROBDD would be identical, a more efficient algorithm might require fewer operations to construct it.
-% doubtful if improvement for such small values of n (32)
+While the resulting BDD would be identical once reduced, a more efficient algorithm might require fewer operations to construct it.
 
-Another possibility to consider is using 8-bit or perhaps even 4-bit arithmetic for the BDD test.
+Another possibility to consider is using 8-bit or 4-bit, rather than 32-bit, arithmetic when creating BDD representations of programs.
 The only architectural feature currently supported by the superoptimizer for which this would not work, is the parity flag, which is defined specifically by the 8 least significant bits of a result.
 Since the parity flag is of limited utility, removing support for it would perhaps not be an issue.
 A more serious problem, however, is that adding support for immediate values would become difficult.
 It should also be noted, that with 8-bit or 4-bit arithmetic, testing programs with all possible input values as described in Section~\ref{ss:probabilistic_test} is feasible even for programs with many input registers.
 
-Even without support for multiplication and similar instructions, the method of using BDDs to determine program equivalence described in this thesis could be useful.
+Even without support for multiplication and similarly complex instructions, the method of using BDDs to determine program equivalence described in this thesis could be made useful.
 There are many simple but important instructions, such as shift and rotate, for which support could be added.
 One could also add support for programs with multiple output registers with relative ease.
 
-As a final though, the BDD test might be best utilized stripped of the program generator and the probabilistic test, intended to be used as an external verification tool for a more capable superoptimizer or similar piece of software.
+As a final though, the method of using BDDs to determine program equivalence might be best utilized stripped of the program generator and the probabilistic test, intended to be used as an external verification tool for a more capable superoptimizer or similar piece of software.
 
 \bibliographystyle{ieeetr}
 \bibliography{thesis}
