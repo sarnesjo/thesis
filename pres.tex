@@ -3,7 +3,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{gnuplot-lua-tikz}
 \usepackage{tikz}
+\usepackage{clrscode3e}
+
 \usetikzlibrary{positioning}
+
+\renewcommand{\gets}{\leftarrow}
+\newcommand{\AND}{\land}
+\newcommand{\IOR}{\lor}
+\newcommand{\XOR}{\oplus}
+\newcommand{\NOT}{\lnot}
 
 \title{Using binary decision diagrams to determine program equivalence in a superoptimizer}
 \author{Jesper Särnesjö}
@@ -67,6 +75,100 @@
 \begin{figure}
 \include{bdd_c1_6}
 \end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{stc}()$}
+\zi $f_c \gets 1$
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{mov}(a,b)$}
+\zi \For $i \gets 0$ \To $n-1$
+\zi \Do
+      $a_i \gets b_i$
+    \End
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{cmov}(a,b)$}
+\zi $c \gets \id{condition}$
+\zi \For $i \gets 0$ \To $n-1$
+\zi \Do
+      $a_i \gets \NOT c \AND a_i \IOR c \AND b_i$
+    \End
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{and}(a,b)$}
+\zi \For $i \gets 0$ \To $n-1$ \Do
+\zi   $a_i \gets a_i \AND b_i$ \End
+\zi $f_c \gets 0$
+\zi $f_o \gets 0$
+\zi $f_p \gets \NOT(a_0 \XOR a_1 \XOR ... \XOR a_7)$
+\zi $f_s \gets a_{n-1}$
+\zi $f_z \gets \NOT(a_0 \IOR a_1 \IOR ... \IOR a_{n-1})$
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{add}(a,b)$}
+\zi $c_0 \gets a_0 \AND b_0$
+\zi $a_0 \gets a_0 \XOR b_0$
+\zi \For $i \gets 1$ \To $n-1$ \Do
+\zi   $c_i \gets a_i \AND b_i \IOR a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $a_i \gets a_i \XOR b_i \XOR c_{i-1}$ \End
+\zi $f_c \gets c_{n-1}$
+\zi $f_o \gets c_{n-1} \XOR c_{n-2}$
+\zi $f_p \gets \NOT(a_0 \XOR a_1 \XOR ... \XOR a_7)$
+\zi $f_s \gets a_{n-1}$
+\zi $f_z \gets \NOT(a_0 \IOR a_1 \IOR ... \IOR a_{n-1})$
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{imul}(a,b)$}
+\zi \For $j \gets 0 \To n-1$ \Do
+\zi   $x \gets a_{0} \AND b_{j}$
+\zi   $c_{j} \gets p_{j} \AND x$
+\zi   $p_{j} \gets p_{j} \XOR x$
+\zi   \For $i \gets j+1 \To 2n-1$ \Do
+\zi     $x \gets a_{i-j} \AND b_{j}$
+\zi     $c_{i} \gets p_{i} \AND x \IOR p_{i} \AND c_{i-1} \IOR x \AND c_{i-1}$
+\zi     $p_{i} \gets p_{i} \XOR x \XOR c_{i-1}$ \End \End
+\zi \For $i \gets 0 \To n-1$ \Do
+\zi   $a_{i} \gets p_{i}$ \End
+\zi $f_c \gets f_o \gets p_{n} \IOR p_{n+1} \IOR ... \IOR p_{2n-1}$
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{imul}(a,b)$}
+\zi \For $j \gets 0 \To n-1$ \Do
+\zi   $x \gets a_{0} \AND b_{j}$
+\zi   $c_{j} \gets p_{j} \AND x$
+\zi   $p_{j} \gets p_{j} \XOR x$
+\zi   \For $i \gets j+1 \To n-1$ \Do
+\zi     $x \gets a_{i-j} \AND b_{j}$
+\zi     $c_{i} \gets p_{i} \AND x \IOR p_{i} \AND c_{i-1} \IOR x \AND c_{i-1}$
+\zi     $p_{i} \gets p_{i} \XOR x \XOR c_{i-1}$ \End
+\zi   \For $i \gets n \To 2n-1$ \Do
+\zi     $o \gets o \IOR a_{i-j} \AND b_{j}$ \End
+\zi   $o \gets o \IOR c_{n-1}$ \End
+\zi \For $i \gets 0 \To n-1$ \Do
+\zi   $a_{i} \gets p_{i}$ \End
+\zi $f_c \gets f_o \gets o$
+\end{codebox}
 \end{frame}
 
 \end{document}
