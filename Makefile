@@ -1,13 +1,16 @@
 GNUPLOT_TEX_FILES = so_program_length.tex performance_mul.tex
 TIKZ_TEX_FILES = bdd_add1.tex bdd_add2.tex bdd_c1.tex bdd_c2_bad.tex long_multiplication.tex
 
-all: spec.pdf thesis.pdf
+all: spec.pdf thesis.pdf pres.pdf
 
 spec.pdf: spec.tex thesis.bib
 	rubber --pdf spec.tex
 
 thesis.pdf: thesis.tex thesis.bib $(GNUPLOT_TEX_FILES) $(TIKZ_TEX_FILES)
 	rubber --pdf thesis.tex
+
+pres.pdf: pres.tex
+	rubber --pdf pres.tex
 
 $(GNUPLOT_TEX_FILES): %.tex: %.gpi
 	gnuplot -e 'set terminal tikz createstyle; set output "$@";' $<
@@ -16,5 +19,6 @@ $(GNUPLOT_TEX_FILES): %.tex: %.gpi
 clean:
 	rubber --pdf --clean spec.tex
 	rubber --pdf --clean thesis.tex
+	rubber --pdf --clean pres.tex
 	rm -f $(GNUPLOT_TEX_FILES)
 	rm -f gnuplot-lua-tikz.sty
