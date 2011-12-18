@@ -1,5 +1,17 @@
 GNUPLOT_TEX_FILES = so_program_length.tex performance_mul.tex
-TIKZ_TEX_FILES = bdd_add1.tex bdd_add2.tex bdd_c1.tex bdd_c2_bad.tex long_multiplication.tex
+
+TIKZ_TEX_FILES = \
+	bdd_add1.tex \
+	bdd_add2.tex \
+	bdd_c1.tex \
+	bdd_c1_1.tex \
+	bdd_c1_2.tex \
+	bdd_c1_3.tex \
+	bdd_c1_4.tex \
+	bdd_c1_5.tex \
+	bdd_c1_6.tex \
+	bdd_c2_bad.tex \
+	long_multiplication.tex
 
 all: spec.pdf thesis.pdf pres.pdf
 
@@ -9,7 +21,7 @@ spec.pdf: spec.tex thesis.bib
 thesis.pdf: thesis.tex thesis.bib $(GNUPLOT_TEX_FILES) $(TIKZ_TEX_FILES)
 	rubber --pdf thesis.tex
 
-pres.pdf: pres.tex
+pres.pdf: pres.tex $(TIKZ_TEX_FILES)
 	rubber --pdf pres.tex
 
 $(GNUPLOT_TEX_FILES): %.tex: %.gpi
