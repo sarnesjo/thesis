@@ -1,0 +1,8 @@
+set grid
+set logscale x
+set xlabel "branching factor"
+set ylabel "program length"
+set xrange [1:10000]
+set yrange [0:20]
+
+plot log(50000.0*60*60*24)/log(x) title ""

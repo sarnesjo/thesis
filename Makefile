@@ -1,4 +1,9 @@
-GNUPLOT_TEX_FILES = so_program_length.tex performance_mul.tex
+GNUPLOT_TEX_FILES = \
+	performance_mul.tex \
+	so_program_length.tex \
+	so_program_length_1.tex \
+	so_program_length_2.tex \
+	so_program_length_3.tex
 
 TIKZ_TEX_FILES = \
 	bdd_add1.tex \
@@ -21,7 +26,7 @@ spec.pdf: spec.tex thesis.bib
 thesis.pdf: thesis.tex thesis.bib $(GNUPLOT_TEX_FILES) $(TIKZ_TEX_FILES)
 	rubber --pdf thesis.tex
 
-pres.pdf: pres.tex $(TIKZ_TEX_FILES)
+pres.pdf: pres.tex $(GNUPLOT_TEX_FILES) $(TIKZ_TEX_FILES)
 	rubber --pdf pres.tex
 
 $(GNUPLOT_TEX_FILES): %.tex: %.gpi
