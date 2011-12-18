@@ -1,9 +1,9 @@
 \documentclass{beamer}
 
 \usepackage[utf8]{inputenc}
+\usepackage{clrscode3e}
 \usepackage{gnuplot-lua-tikz}
 \usepackage{tikz}
-\usepackage{clrscode3e}
 
 \usetikzlibrary{positioning}
 
@@ -168,6 +168,17 @@
 \zi \For $i \gets 0 \To n-1$ \Do
 \zi   $a_{i} \gets p_{i}$ \End
 \zi $f_c \gets f_o \gets o$
+\end{codebox}
+\end{frame}
+
+\begin{frame}
+\begin{codebox}
+\Procname{$\proc{sign}(a)$}
+\zi \If $a > 0$ \Do
+\zi   \Return $1$ \End
+\zi \If $a < 0$ \Do
+\zi   \Return $-1$ \End
+\zi \Return $0$
 \end{codebox}
 \end{frame}
 
