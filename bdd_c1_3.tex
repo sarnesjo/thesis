@@ -2,6 +2,7 @@
 [every node/.style={draw=black,thick,minimum size=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
  var/.style={circle},
  val/.style={rectangle},
+ hl/.style={rectangle,draw=red,minimum size=7mm},
  thick]
 \node[var] (a0)                                            {$a_0$};
 \node[var] (b0A) [on grid,below  left=8mm and 24mm of a0]  {$b_0$};
@@ -33,4 +34,8 @@
 \path             (a1D) edge (b1H);
 \path[dashed]     (b1G) edge (tM);
 \path             (b1G) edge (tN);
+
+% included on every picture to make sure a0 stays centered
+\node[draw=white] (xA) [on grid,below  left=32mm and 45mm of a0] {};
+\node[draw=white] (xb) [on grid,below right=32mm and 45mm of a0] {};
 \end{tikzpicture}

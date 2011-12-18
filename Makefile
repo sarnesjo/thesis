@@ -10,9 +10,14 @@ TIKZ_TEX_FILES = \
 	bdd_add2.tex \
 	bdd_c1.tex \
 	bdd_c1_1.tex \
+	bdd_c1_1a.tex \
+	bdd_c1_1b.tex \
 	bdd_c1_2.tex \
+	bdd_c1_2a.tex \
 	bdd_c1_3.tex \
+	bdd_c1_3a.tex \
 	bdd_c1_4.tex \
+	bdd_c1_4a.tex \
 	bdd_c1_5.tex \
 	bdd_c1_6.tex \
 	bdd_c2_bad.tex \
