@@ -4,7 +4,6 @@
 \usepackage{clrscode3e}
 \usepackage{gnuplot-lua-tikz}
 \usepackage{tikz}
-\usepackage{verbatim}
 
 \usetikzlibrary{positioning}
 
@@ -396,64 +395,63 @@ length & & & \\
 \end{table}
 \end{frame}
 
-\begin{frame}[containsverbatim]
+\begin{frame}
 \begin{table}
 \tiny
 \begin{tabular}{l|lll}
-& \verb|r0| $>$ 0
-& \verb|r0| $<$ 0
-& \verb|r0| $=$ 0 \\
+& r0 $>$ 0
+& r0 $<$ 0
+& r0 $=$ 0 \\
 \hline
-\verb|add r0,r0|
-& \verb|r0| $\gets X$, \verb|cf| $\gets 0$
-& \verb|r0| $\gets Y$, \verb|cf| $\gets 1$
-& \verb|r0| $\gets 0$, \verb|cf| $\gets 0$ \\
-\verb|sbb r1,r1|
-& \verb|r1| $\gets 0$
-& \verb|r1| $\gets -1$
-& \verb|r1| $\gets 0$ \\
-\verb|sub r1,r0|
-& \verb|r1| $\gets -X$, \verb|cf| $\gets 1$
-& \verb|r1| $\gets -1-Y$, \verb|cf| $\gets 0$
-& \verb|r1| $\gets 0$, \verb|cf| $\gets 0$ \\
-\verb|adc r1,r0|
-& \verb|r1| $\gets 1$
-& \verb|r1| $\gets -1$
-& \verb|r1| $\gets 0$ \\
+add r0,r0
+& r0 $\gets X$, cf $\gets 0$
+& r0 $\gets Y$, cf $\gets 1$
+& r0 $\gets 0$, cf $\gets 0$ \\
+sbb r1,r1
+& r1 $\gets 0$
+& r1 $\gets -1$
+& r1 $\gets 0$ \\
+sub r1,r0
+& r1 $\gets -X$, cf $\gets 1$
+& r1 $\gets -1-Y$, cf $\gets 0$
+& r1 $\gets 0$, cf $\gets 0$ \\
+adc r1,r0
+& r1 $\gets 1$
+& r1 $\gets -1$
+& r1 $\gets 0$ \\
 \end{tabular}
 \end{table}
 \end{frame}
 
-\begin{frame}[containsverbatim]
+\begin{frame}
 \begin{table}
 \tiny
 \begin{tabular}{l|l}
-\verb|add r0,r0|
-& \verb|r0| $\gets 0$, \verb|cf| $\gets 1$ \\
-\verb|sbb r1,r1|
-& \verb|r1| $\gets -1$ \\
-\verb|neg r0|
-& \verb|r0| $\gets 0$, \verb|cf| $\gets 0$ \\
-\verb|adc r1,r1|
-& \verb|r1| $\gets -2$ \\
+add r0,r0
+& r0 $\gets 0$, cf $\gets 1$ \\
+sbb r1,r1
+& r1 $\gets -1$ \\
+neg r0
+& r0 $\gets 0$, cf $\gets 0$ \\
+adc r1,r1
+& r1 $\gets -2$ \\
 \end{tabular}
 \end{table}
 \end{frame}
 
-\begin{frame}[containsverbatim]
+\begin{frame}
 \begin{table}
 \tiny
 \begin{tabular}{l|l}
-$P_0$ & \verb|mov r1,r0;| \\
-$P_1$ & \verb|xor r1,r1; and r1,r0;| \\
-$P_2$ & \verb|sub r1,r1; and r1,r0;| \\
-$P_3$ & \verb|xor r1,r1; add r1,r0;| \\
-$P_4$ & \verb|sub r1,r1; add r1,r0;| \\
-$P_5$ & \verb|add r0,r0; sbb r1,r1; inc r1;| \\
-$P_6$ & \verb|add r0,r0; sbb r1,r1; sub r1,r0; adc r1,r0;| \\
-$P_7$ & \verb|add r0,r0; sbb r1,r1; neg r0; adc r1,r1;| \\
-$P_8$ & \verb|xor r1,r1; xor r2,r2; xor r3,r3; inc r2; dec r3;|\\
-      & \verb| cmp r1,r0; cmovl r1,r2; cmovg r1,r3;| \\
+$P_0$ & mov r1,r0; \\
+$P_1$ & xor r1,r1; and r1,r0; \\
+$P_2$ & sub r1,r1; and r1,r0; \\
+$P_3$ & xor r1,r1; add r1,r0; \\
+$P_4$ & sub r1,r1; add r1,r0; \\
+$P_5$ & add r0,r0; sbb r1,r1; inc r1; \\
+$P_6$ & add r0,r0; sbb r1,r1; sub r1,r0; adc r1,r0; \\
+$P_7$ & add r0,r0; sbb r1,r1; neg r0; adc r1,r1; \\
+$P_8$ & xor r1,r1; xor r2,r2; xor r3,r3; inc r2; dec r3; cmp r1,r0; cmovl r1,r2; cmovg r1,r3; \\
 \end{tabular}
 \end{table}
 \end{frame}
