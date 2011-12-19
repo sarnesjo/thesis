@@ -143,6 +143,33 @@ $c_1 \gets (a_0 \IOR a_1) \AND (a_0 \IOR b_1) \AND (a_1 \IOR b_0) \AND (a_1 \IOR
 \end{frame}
 
 \begin{frame}
+\begin{table}
+\small
+\begin{tabular}{lllll}
+flag control & data transfer & logic & addition/subtraction & multiplication \\
+\hline
+stc          & mov           & and   & add                  & imul           \\
+clc          & cmovc         & or    & adc                  &                \\
+cmc          & cmovo         & xor   & sub                  &                \\
+             & cmovp         & not   & sbb                  &                \\
+             & cmovs         &       & cmp                  &                \\
+             & cmovz         &       & inc                  &                \\
+             & cmovnc        &       & dec                  &                \\
+             & cmovno        &       & neg                  &                \\
+             & cmovnp        &       &                      &                \\
+             & cmovns        &       &                      &                \\
+             & cmovnz        &       &                      &                \\
+             & cmova         &       &                      &                \\
+             & cmovbe        &       &                      &                \\
+             & cmovg         &       &                      &                \\
+             & cmovge        &       &                      &                \\
+             & cmovl         &       &                      &                \\
+             & cmovle        &       &                      &                \\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}
 \begin{codebox}
 \Procname{$\proc{stc}()$}
 \zi $f_c \gets 1$
