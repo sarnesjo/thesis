@@ -1,5 +1,6 @@
 GNUPLOT_TEX_FILES = \
 	performance_mul.tex \
+	performance_mul2.tex \
 	so_program_length.tex \
 	so_program_length_1.tex \
 	so_program_length_2.tex \
