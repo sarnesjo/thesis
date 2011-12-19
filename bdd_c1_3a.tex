@@ -2,6 +2,7 @@
 [every node/.style={draw=black,thick,minimum size=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
  var/.style={circle},
  val/.style={rectangle},
+ ref/.style={rectangle,white,draw=gray,fill=gray},
  hl/.style={rectangle,draw=red,minimum size=7mm},
  thick]
 \node[var] (a0)                                            {$a_0$};
@@ -34,6 +35,9 @@
 \path             (a1D) edge (b1H);
 \path[dashed]     (b1G) edge (tM);
 \path             (b1G) edge (tN);
+
+\node[ref] (Rc1) [on grid,above left=8mm and 8mm of a0] {$c_1$};
+\path[->,gray,very thick] (Rc1) edge (a0);
 
 \node[hl] [on grid,below=0mm of a1A] {};
 \node[hl] [on grid,below=0mm of a1B] {};
