@@ -142,6 +142,85 @@ $c_1 \gets (a_0 \IOR a_1) \AND (a_0 \IOR b_1) \AND (a_1 \IOR b_0) \AND (a_1 \IOR
 \end{figure}
 \end{frame}
 
+\begin{frame}[shrink]
+\begin{figure}
+\begin{tikzpicture}[bit/.style={draw=black,minimum size=8mm,thick},etc/.style={draw=black,minimum width=16mm,minimum height=8mm,thick}]
+
+\node      (r0)    [on grid]                     {r0};
+\node[bit] (r0b31) [on grid,right= 8mm of r0]    {31};
+\node[bit] (r0b30) [on grid,right= 8mm of r0b31] {30};
+\node[etc] (r0etc) [on grid,right=12mm of r0b30] {...};
+\node[bit] (r0b1)  [on grid,right=12mm of r0etc] {1};
+\node[bit] (r0b0)  [on grid,right= 8mm of r0b1]  {0};
+
+\node      (r1)    [on grid,below=12mm of r0]    {r1};
+\node[bit] (r1b31) [on grid,right= 8mm of r1]    {31};
+\node[bit] (r1b30) [on grid,right= 8mm of r1b31] {30};
+\node[etc] (r1etc) [on grid,right=12mm of r1b30] {...};
+\node[bit] (r1b1)  [on grid,right=12mm of r1etc] {1};
+\node[bit] (r1b0)  [on grid,right= 8mm of r1b1]  {0};
+
+\node      (r2)    [on grid,below=12mm of r1]    {r2};
+\node[bit] (r2b31) [on grid,right= 8mm of r2]    {31};
+\node[bit] (r2b30) [on grid,right= 8mm of r2b31] {30};
+\node[etc] (r2etc) [on grid,right=12mm of r2b30] {...};
+\node[bit] (r2b1)  [on grid,right=12mm of r2etc] {1};
+\node[bit] (r2b0)  [on grid,right= 8mm of r2b1]  {0};
+
+\node      (r3)    [on grid,below=12mm of r2]    {r3};
+\node[bit] (r3b31) [on grid,right= 8mm of r3]    {31};
+\node[bit] (r3b30) [on grid,right= 8mm of r3b31] {30};
+\node[etc] (r3etc) [on grid,right=12mm of r3b30] {...};
+\node[bit] (r3b1)  [on grid,right=12mm of r3etc] {1};
+\node[bit] (r3b0)  [on grid,right= 8mm of r3b1]  {0};
+
+\node      (r4)    [on grid,below=12mm of r3]    {r4};
+\node[bit] (r4b31) [on grid,right= 8mm of r4]    {31};
+\node[bit] (r4b30) [on grid,right= 8mm of r4b31] {30};
+\node[etc] (r4etc) [on grid,right=12mm of r4b30] {...};
+\node[bit] (r4b1)  [on grid,right=12mm of r4etc] {1};
+\node[bit] (r4b0)  [on grid,right= 8mm of r4b1]  {0};
+
+\node      (r5)    [on grid,below=12mm of r4]    {r5};
+\node[bit] (r5b31) [on grid,right= 8mm of r5]    {31};
+\node[bit] (r5b30) [on grid,right= 8mm of r5b31] {30};
+\node[etc] (r5etc) [on grid,right=12mm of r5b30] {...};
+\node[bit] (r5b1)  [on grid,right=12mm of r5etc] {1};
+\node[bit] (r5b0)  [on grid,right= 8mm of r5b1]  {0};
+
+\node      (r6)    [on grid,below=12mm of r5]    {r6};
+\node[bit] (r6b31) [on grid,right= 8mm of r6]    {31};
+\node[bit] (r6b30) [on grid,right= 8mm of r6b31] {30};
+\node[etc] (r6etc) [on grid,right=12mm of r6b30] {...};
+\node[bit] (r6b1)  [on grid,right=12mm of r6etc] {1};
+\node[bit] (r6b0)  [on grid,right= 8mm of r6b1]  {0};
+
+\node      (r7)    [on grid,below=12mm of r6]    {r7};
+\node[bit] (r7b31) [on grid,right= 8mm of r7]    {31};
+\node[bit] (r7b30) [on grid,right= 8mm of r7b31] {30};
+\node[etc] (r7etc) [on grid,right=12mm of r7b30] {...};
+\node[bit] (r7b1)  [on grid,right=12mm of r7etc] {1};
+\node[bit] (r7b0)  [on grid,right= 8mm of r7b1]  {0};
+
+\node      (cf)    [on grid,right=64mm of r0]    {cf};
+\node[bit] (cfb)   [on grid,right= 8mm of cf]    {};
+
+\node      (of)    [on grid,below=12mm of cf]    {of};
+\node[bit] (ofb)   [on grid,right= 8mm of of]    {};
+
+\node      (pf)    [on grid,below=12mm of of]    {pf};
+\node[bit] (pfb)   [on grid,right= 8mm of pf]    {};
+
+\node      (sf)    [on grid,below=12mm of pf]    {sf};
+\node[bit] (sfb)   [on grid,right= 8mm of sf]    {};
+
+\node      (zf)    [on grid,below=12mm of sf]    {zf};
+\node[bit] (zfb)   [on grid,right= 8mm of zf]    {};
+
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
 \begin{frame}
 \begin{table}
 \small
