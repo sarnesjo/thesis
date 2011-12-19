@@ -1,0 +1,81 @@
+\begin{tikzpicture}
+[every node/.style={draw=black,thick,minimum size=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
+ var/.style={circle},
+ val/.style={rectangle},
+ ref/.style={rectangle,white,draw=gray,fill=gray},
+ thick]
+
+% c0
+\node[var] (C0a0)                                           {$a_0$};
+\node[var] (C0b0) [on grid,below right=8mm and 6mm of C0a0] {$b_0$};
+\node[val] (C0t0) [on grid,below  left=8mm and 6mm of C0b0] {0};
+\node[val] (C0t1) [on grid,below right=8mm and 6mm of C0b0] {1};
+\path[dashed] (C0a0) edge (C0t0);
+\path         (C0a0) edge (C0b0);
+\path[dashed] (C0b0) edge (C0t0);
+\path         (C0b0) edge (C0t1);
+
+% s0
+\node[var] (S0a0)  [on grid,right=30mm              of C0a0] {$a_0$};
+\node[var] (S0b0A) [on grid,below  left=8mm and 6mm of S0a0] {$b_0$};
+\node[var] (S0b0B) [on grid,below right=8mm and 6mm of S0a0] {$b_0$};
+\node[val] (S0t0)  [on grid,below=8mm of S0b0A] {0};
+\node[val] (S0t1)  [on grid,below=8mm of S0b0B] {1};
+\path[dashed] (S0a0)  edge (S0b0A);
+\path         (S0a0)  edge (S0b0B);
+\path[dashed] (S0b0A) edge (S0t0);
+\path         (S0b0A) edge (S0t1);
+\path[dashed] (S0b0B) edge (S0t1);
+\path         (S0b0B) edge (S0t0);
+
+% c1
+\node[var] (C1a0)  [on grid,right=18mm              of S0a0]  {$a_0$};
+\node[var] (C1b0)  [on grid,below right=8mm and 6mm of C1a0]  {$b_0$};
+\node[var] (C1a1A) [on grid,below  left=8mm and 6mm of C1b0]  {$a_1$};
+\node[var] (C1a1B) [on grid,below right=8mm and 6mm of C1b0]  {$a_1$};
+\node[var] (C1b1)  [on grid,below  left=8mm and 6mm of C1a1B] {$b_1$};
+\node[val] (C1t0)  [on grid,below  left=8mm and 6mm of C1b1]  {0};
+\node[val] (C1t1)  [on grid,below right=8mm and 6mm of C1b1]  {1};
+\path[dashed] (C1a0)  edge (C1a1A);
+\path         (C1a0)  edge (C1b0);
+\path[dashed] (C1b0)  edge (C1a1A);
+\path         (C1b0)  edge (C1a1B);
+\path[dashed] (C1a1A) edge (C1t0);
+\path         (C1a1A) edge (C1b1);
+\path[dashed] (C1a1B) edge (C1b1);
+\path         (C1a1B) edge (C1t1);
+\path[dashed] (C1b1)  edge (C1t0);
+\path         (C1b1)  edge (C1t1);
+
+% s1
+\node[var] (S1a0)  [on grid,right=24mm              of C1a0]  {$a_0$};
+\node[var] (S1b0)  [on grid,below right=8mm and 6mm of S1a0]  {$b_0$};
+\node[var] (S1a1A) [on grid,below  left=8mm and 6mm of S1b0]  {$a_1$};
+\node[var] (S1a1B) [on grid,below right=8mm and 6mm of S1b0]  {$a_1$};
+\node[var] (S1b1A) [on grid,below=8mm               of S1a1A] {$b_1$};
+\node[var] (S1b1B) [on grid,below=8mm               of S1a1B] {$b_1$};
+\node[val] (S1t0)  [on grid,below=8mm               of S1b1A] {0};
+\node[val] (S1t1)  [on grid,below=8mm               of S1b1B] {1};
+\path[dashed] (S1a0)  edge (S1a1A);
+\path         (S1a0)  edge (S1b0);
+\path[dashed] (S1b0)  edge (S1a1A);
+\path         (S1b0)  edge (S1a1B);
+\path[dashed] (S1a1A) edge (S1b1A);
+\path         (S1a1A) edge (S1b1B);
+\path[dashed] (S1a1B) edge (S1b1B);
+\path         (S1a1B) edge (S1b1A);
+\path[dashed] (S1b1A) edge (S1t0);
+\path         (S1b1A) edge (S1t1);
+\path[dashed] (S1b1B) edge (S1t1);
+\path         (S1b1B) edge (S1t0);
+
+\node[ref] (Rs0) [on grid,above left=8mm and 8mm of S0a0] {$s_0$};
+\node[ref] (Rc0) [on grid,above left=8mm and 8mm of C0a0] {$c_0$};
+\node[ref] (Rs1) [on grid,above left=8mm and 8mm of S1a0] {$s_1$};
+\node[ref] (Rc1) [on grid,above left=8mm and 8mm of C1a0] {$c_1$};
+\path[->,gray,very thick] (Rs0) edge (S0a0);
+\path[->,gray,very thick] (Rc0) edge (C0a0);
+\path[->,gray,very thick] (Rs1) edge (S1a0);
+\path[->,gray,very thick] (Rc1) edge (C1a0);
+
+\end{tikzpicture}

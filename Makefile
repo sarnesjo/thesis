@@ -8,6 +8,8 @@ GNUPLOT_TEX_FILES = \
 TIKZ_TEX_FILES = \
 	bdd_add1.tex \
 	bdd_add2.tex \
+	bdd_add_sep.tex \
+	bdd_add_shared.tex \
 	bdd_c1.tex \
 	bdd_c1_1.tex \
 	bdd_c1_1a.tex \
