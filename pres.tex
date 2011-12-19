@@ -26,6 +26,26 @@
 
 \begin{frame}
 \begin{figure}
+\begin{tikzpicture}
+\uncover<1->{\node (stc) [on grid]                   {stc};}
+\uncover<2->{\node (i0)  [on grid,below=12mm of stc] {$i_0$};}
+\uncover<2->{\path[->] (i0) edge (stc);}
+\uncover<3->{\node (inc) [on grid,right=24mm of stc] {inc r0};}
+\uncover<4->{\node (i1)  [on grid,below=12mm of inc] {$i_1 r$};}
+\uncover<4->{\path[->] (i1) edge (inc);}
+\uncover<5->{\node (add) [on grid,right=24mm of inc] {add r0,r1};}
+\uncover<6->{\node (i2)  [on grid,below=12mm of add] {$i_2 r^2$};}
+\uncover<6->{\path[->] (i2) edge (add);}
+\uncover<7->{\node (pA)  [on grid,right=12mm of i0]  {$+$};}
+\uncover<7->{\node (pB)  [on grid,right=12mm of i1]  {$+$};}
+\uncover<7->{\node (eq)  [on grid,right=12mm of i2]  {$=$};}
+\uncover<7->{\node (b)   [on grid,right=12mm of eq]  {$b$};}
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\begin{figure}
 \include{so_program_length_1}
 \end{figure}
 \end{frame}
