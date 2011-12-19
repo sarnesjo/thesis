@@ -43,6 +43,28 @@
 \end{frame}
 
 \begin{frame}
+$s_0 \gets a_0 \XOR b_0$
+
+$s_1 \gets a_1 \XOR b_1 \XOR a_0 \AND b_0$
+\end{frame}
+
+\begin{frame}
+$s_0 \gets a_0 \XOR b_0$
+
+$c_0 \gets a_0 \AND b_0$
+
+$s_1 \gets a_1 \XOR b_1 \XOR c_0$
+
+$c_1 \gets a_1 \AND b_1 \IOR a_1 \AND c_0 \IOR b_1 \AND c_0$
+\end{frame}
+
+\begin{frame}
+$c_1 \gets (a_0 \AND a_1 \AND b_0) \IOR (a_0 \AND b_0 \AND b_1) \IOR (a_1 \AND b_1)$ % DNF
+
+$c_1 \gets (a_0 \IOR a_1) \AND (a_0 \IOR b_1) \AND (a_1 \IOR b_0) \AND (a_1 \IOR b_1) \AND (b_0 \IOR b_1)$ % CNF
+\end{frame}
+
+\begin{frame}
 \begin{figure}
 \include{bdd_c1_1}
 \end{figure}
