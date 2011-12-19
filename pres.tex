@@ -44,19 +44,19 @@
 \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[shrink]
 \begin{figure}
 \include{so_program_length_1}
 \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[shrink]
 \begin{figure}
 \include{so_program_length_2}
 \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[shrink]
 \begin{figure}
 \include{so_program_length_3}
 \end{figure}
@@ -251,7 +251,7 @@ $c_1 \gets (a_0 \IOR a_1) \AND (a_0 \IOR b_1) \AND (a_1 \IOR b_0) \AND (a_1 \IOR
 
 \begin{frame}
 \begin{table}
-\small
+\tiny
 \begin{tabular}{lllll}
 flag control & data transfer & logic & addition/subtraction & multiplication \\
 \hline
@@ -383,6 +383,7 @@ cmc          & cmovo         & xor   & sub                  &                \\
 
 \begin{frame}
 \begin{table}
+\tiny
 \begin{tabular}{l|rrr}
 length & & & \\
 \hline
@@ -397,6 +398,7 @@ length & & & \\
 
 \begin{frame}[containsverbatim]
 \begin{table}
+\tiny
 \begin{tabular}{l|lll}
 & \verb|r0| $>$ 0
 & \verb|r0| $<$ 0
@@ -424,6 +426,7 @@ length & & & \\
 
 \begin{frame}[containsverbatim]
 \begin{table}
+\tiny
 \begin{tabular}{l|l}
 \verb|add r0,r0|
 & \verb|r0| $\gets 0$, \verb|cf| $\gets 1$ \\
@@ -439,6 +442,7 @@ length & & & \\
 
 \begin{frame}[containsverbatim]
 \begin{table}
+\tiny
 \begin{tabular}{l|l}
 $P_0$ & \verb|mov r1,r0;| \\
 $P_1$ & \verb|xor r1,r1; and r1,r0;| \\
@@ -456,6 +460,8 @@ $P_8$ & \verb|xor r1,r1; xor r2,r2; xor r3,r3; inc r2; dec r3;|\\
 
 \begin{frame}
 \begin{table}
+\tiny
+\setlength{\tabcolsep}{1mm}
 \begin{tabular}{*{9}{c}}
 $P_0$    & $P_1$    & $P_2$    & $P_3$    & $P_4$    & $P_5$    & $P_6$    & $P_7$    & $P_8$    \\
 \hline
@@ -466,6 +472,8 @@ $P_0$    & $P_1$    & $P_2$    & $P_3$    & $P_4$    & $P_5$    & $P_6$    & $P_
 
 \begin{frame}
 \begin{table}
+\tiny
+\setlength{\tabcolsep}{1mm}
 \begin{tabular}{l|*{9}{c}}
       & $P_0$    & $P_1$    & $P_2$    & $P_3$    & $P_4$    & $P_5$    & $P_6$    & $P_7$    & $P_8$    \\
 \hline
@@ -482,7 +490,7 @@ $P_8$ &          &          &          &          &          &          &       
 \end{table}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[shrink]
 \begin{figure}
 \include{performance_mul}
 \end{figure}
