@@ -67,31 +67,45 @@
 \begin{frame}
 \end{frame}
 
-\begin{frame}
-\begin{equation*}
-\begin{array}{rcl}
-\uncover<1->{s & \gets & a + b \\}
-\uncover<2->{\langle s_1,s_0 \rangle & \gets & \langle a_1,a_0 \rangle + \langle b_1,b_0 \rangle \\}
-\end{array}
-\end{equation*}
-\end{frame}
+%\begin{frame}
+%\begin{equation*}
+%\begin{array}{rcl}
+%\uncover<1->{s & \gets & a + b \\}
+%\uncover<2->{\langle s_1,s_0 \rangle & \gets & \langle a_1,a_0 \rangle + \langle b_1,b_0 \rangle \\}
+%\end{array}
+%\end{equation*}
+%\end{frame}
+
+%\begin{frame}
+%\begin{equation*}
+%\begin{array}{rcl}
+%\uncover<1->{s_0 & \gets & a_0 \XOR b_0 \\}
+%\uncover<2->{s_1 & \gets & a_1 \XOR b_1 \XOR a_0 \AND b_0 \\}
+%\end{array}
+%\end{equation*}
+%\end{frame}
 
 \begin{frame}
+\begin{figure}
+\begin{tikzpicture}
+[every node/.style={minimum width=5mm,minimum height=5mm,inner sep=0mm,outer sep=0mm,font=\footnotesize},
+ box/.style={draw=black,rectangle}]
+\node[box] (a0)                           {$a_0$};
+\node[box] (a1) [on grid, left=5mm of a0] {$a_1$};
+\node[box] (b0) [on grid,below=6mm of a0] {$b_0$};
+\node[box] (b1) [on grid, left=5mm of b0] {$b_1$};
+\node           [on grid, left=5mm of b1] {$+$};
+\node[box] (s0) [on grid,below=8mm of b0] {$s_0$};
+\node[box] (s1) [on grid, left=5mm of s0] {$s_1$};
+\draw[thick] (2.5mm,-10mm) -- (-12.5mm,-10mm);
+\end{tikzpicture}
+\end{figure}
 \begin{equation*}
 \begin{array}{rcl}
-\uncover<1->{s_0 & \gets & a_0 \XOR b_0 \\}
-\uncover<2->{s_1 & \gets & a_1 \XOR b_1 \XOR a_0 \AND b_0 \\}
-\end{array}
-\end{equation*}
-\end{frame}
-
-\begin{frame}
-\begin{equation*}
-\begin{array}{rcl}
-\uncover<1->{s_0 & \gets & a_0 \XOR b_0 \\}
-\uncover<2->{c_0 & \gets & a_0 \AND b_0 \\}
-\uncover<3->{s_1 & \gets & a_1 \XOR b_1 \XOR c_0 \\}
-\uncover<4->{c_1 & \gets & a_1 \AND b_1 \IOR a_1 \AND c_0 \IOR b_1 \AND c_0 \\}
+\uncover<2->{s_0 & \gets & a_0 \XOR b_0 \\}
+\uncover<3->{c_0 & \gets & a_0 \AND b_0 \\}
+\uncover<4->{s_1 & \gets & a_1 \XOR b_1 \XOR c_0 \\}
+\uncover<5->{c_1 & \gets & a_1 \AND b_1 \IOR a_1 \AND c_0 \IOR b_1 \AND c_0 \\}
 \end{array}
 \end{equation*}
 \end{frame}
