@@ -389,16 +389,16 @@ cmc          & cmovo         & xor   & sub                  &                \\
 \begin{frame}
 \end{frame}
 
-\begin{frame}
-\begin{codebox}
-\Procname{$\proc{sign}(a)$}
-\zi \If $a > 0$ \Do
-\zi   \Return $1$ \End
-\zi \If $a < 0$ \Do
-\zi   \Return $-1$ \End
-\zi \Return $0$
-\end{codebox}
-\end{frame}
+%\begin{frame}
+%\begin{codebox}
+%\Procname{$\proc{sign}(a)$}
+%\zi \If $a > 0$ \Do
+%\zi   \Return $1$ \End
+%\zi \If $a < 0$ \Do
+%\zi   \Return $-1$ \End
+%\zi \Return $0$
+%\end{codebox}
+%\end{frame}
 
 \begin{frame}
 \begin{table}
@@ -415,56 +415,56 @@ length & & & \\
 \end{table}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-add r0,r0; sbb r1,r1; sub r1,r0; adc r1,r0; \\
-add r0,r0; sbb r1,r1; neg r0; adc r1,r1;
-\end{center}
-\end{frame}
-
-\begin{frame}
-\begin{table}
-\tiny
-\begin{tabular}{l|lll}
-& r0 $>$ 0
-& r0 $<$ 0
-& r0 $=$ 0 \\
-\hline
-add r0,r0
-& \uncover<2->{r0 $\gets X$, cf $\gets 0$}
-& \uncover<3->{r0 $\gets Y$, cf $\gets 1$}
-& \uncover<4->{r0 $\gets 0$, cf $\gets 0$} \\
-sbb r1,r1
-& \uncover<2->{r1 $\gets 0$}
-& \uncover<3->{r1 $\gets -1$}
-& \uncover<4->{r1 $\gets 0$} \\
-sub r1,r0
-& \uncover<2->{r1 $\gets -X$, cf $\gets 1$}
-& \uncover<3->{r1 $\gets -1-Y$, cf $\gets 0$}
-& \uncover<4->{r1 $\gets 0$, cf $\gets 0$} \\
-adc r1,r0
-& \uncover<2->{r1 $\gets 1$}
-& \uncover<3->{r1 $\gets -1$}
-& \uncover<4->{r1 $\gets 0$} \\
-\end{tabular}
-\end{table}
-\end{frame}
-
-\begin{frame}
-\begin{table}
-\tiny
-\begin{tabular}{l|l}
-add r0,r0
-& \uncover<2->{r0 $\gets 0$, cf $\gets 1$} \\
-sbb r1,r1
-& \uncover<2->{r1 $\gets -1$} \\
-neg r0
-& \uncover<2->{r0 $\gets 0$, cf $\gets 0$} \\
-adc r1,r1
-& \uncover<2->{r1 $\gets -2$} \\
-\end{tabular}
-\end{table}
-\end{frame}
+%\begin{frame}
+%\begin{center}
+%add r0,r0; sbb r1,r1; sub r1,r0; adc r1,r0; \\
+%add r0,r0; sbb r1,r1; neg r0; adc r1,r1;
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}
+%\begin{table}
+%\tiny
+%\begin{tabular}{l|lll}
+%& r0 $>$ 0
+%& r0 $<$ 0
+%& r0 $=$ 0 \\
+%\hline
+%add r0,r0
+%& \uncover<2->{r0 $\gets X$, cf $\gets 0$}
+%& \uncover<3->{r0 $\gets Y$, cf $\gets 1$}
+%& \uncover<4->{r0 $\gets 0$, cf $\gets 0$} \\
+%sbb r1,r1
+%& \uncover<2->{r1 $\gets 0$}
+%& \uncover<3->{r1 $\gets -1$}
+%& \uncover<4->{r1 $\gets 0$} \\
+%sub r1,r0
+%& \uncover<2->{r1 $\gets -X$, cf $\gets 1$}
+%& \uncover<3->{r1 $\gets -1-Y$, cf $\gets 0$}
+%& \uncover<4->{r1 $\gets 0$, cf $\gets 0$} \\
+%adc r1,r0
+%& \uncover<2->{r1 $\gets 1$}
+%& \uncover<3->{r1 $\gets -1$}
+%& \uncover<4->{r1 $\gets 0$} \\
+%\end{tabular}
+%\end{table}
+%\end{frame}
+%
+%\begin{frame}
+%\begin{table}
+%\tiny
+%\begin{tabular}{l|l}
+%add r0,r0
+%& \uncover<2->{r0 $\gets 0$, cf $\gets 1$} \\
+%sbb r1,r1
+%& \uncover<2->{r1 $\gets -1$} \\
+%neg r0
+%& \uncover<2->{r0 $\gets 0$, cf $\gets 0$} \\
+%adc r1,r1
+%& \uncover<2->{r1 $\gets -2$} \\
+%\end{tabular}
+%\end{table}
+%\end{frame}
 
 \begin{frame}
 \end{frame}
