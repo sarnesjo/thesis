@@ -83,16 +83,13 @@ Programs that compute the same function are referred to as \emph{equivalent}.
 
 Methods used to determine program equivalence in existing superoptimizers include probabilistic testing, as well as expressing programs in Boolean logic and comparing canonical representations of them.
 A difficulty met by the latter method, is that the Boolean-logic representations of many common programs are very large.
+
 This thesis explores using \emph{binary decision diagrams} (BDDs), which are data structures capable of efficiently representing Boolean functions, for the purpose of determining program equivalence.
-
 Chapter~\ref{ch:background} provides a primer on the history and functionality of superoptimizers and BDDs.
-
-Chapter~\ref{ch:target_architecture} describes the subset of the x86 architecture which serves as the target architecture for the superoptimizer implemented as part of this thesis project.
-
-Chapter~\ref{ch:design_implementation} describes the superoptimizer in detail, focusing on its method of using BDDs to determine program equivalence.
-
-Chapter~\ref{ch:results_conclusions} gives an example of the operation of the superoptimizer. It also provides an analysis of the performance of the superoptimizer's method of creating and comparing BDD representations of programs.
-
+Chapter~\ref{ch:target_architecture} describes the subset of the x86 architecture which serves as the target architecture for the superoptimizer implemented as part of this thesis project,
+while Chapter~\ref{ch:design_implementation} describes the superoptimizer itself, focusing on its method of using BDDs to determine program equivalence.
+Chapter~\ref{ch:results_conclusions} gives an example of the operation of the superoptimizer.
+It also presents an analysis of the performance of the superoptimizer's method of creating and comparing BDD representations of programs.
 Finally, Chapter~\ref{ch:recommendations_future_work} contains a few suggestions for improving on the results presented in this thesis.
 
 % note on Boolean notation?
@@ -126,11 +123,11 @@ Massalin also describes two methods of determining whether a candidate program i
 
 The first method, referred to as the \emph{Boolean test}, is to express both programs in Boolean logic, reduce them to an unspecified canonical form, and compare them minterm for minterm.
 Using this method, Massalin claims the superoptimizer is capable of testing 40 programs of an unspecified length per second, when running on a 16 MHz processor.
-However, Massalin also notes that this method could not be used to test all generated programs in reasonable time, especially drawing attention to the large Boolean-logic representations of addition and multiplication instructions.
+Massalin also notes, however, that this method could not be used to test all generated programs in reasonable time, especially drawing attention to the large Boolean-logic representations of addition and multiplication instructions.
 
-The second method, referred to as the \emph{probabilistic test}, is to simply execute both programs with identical input, and compare their output.
+The second method, referred to as the \emph{probabilistic test}, is to simply execute both programs with identical inputs, and compare their outputs.
 This method introduces the risk of false positives, in the form of programs that are equivalent only on the input used, not in the general case, making manual verification of the output necessary.
-Further, whereas the Boolean test can be used on any kind of program, Massalin's probabilistic test can only be used on programs written in the assembly language of the host architecture.
+Further, whereas the Boolean test can be used on any kind of program, Massalin's probabilistic test can only be used on programs written in the assembly language of the superoptimizer's host architecture, because it actually executes the candidate program directly on the host architecture.
 This method is significantly faster, however, allowing the superoptimizer to test 50000 programs per second.
 
 It is worth noting, that even with such a significant increase in speed, only slightly longer programs may be generated in reasonable time with a realistic branching factor, as illustrated by Figure~\ref{fig:so_program_length}.
@@ -164,7 +161,7 @@ Specifically, it requires that the last instruction reads a register or the carr
 
 \subsection{Denali}
 
-Denali is a superoptimizer created by Joshi et al, then at Compaq Systems Research Center, first described in a 2002 paper \cite{joshi02}.
+Denali is a superoptimizer created by Joshi et al., then at Compaq Systems Research Center, first described in a 2002 paper \cite{joshi02}.
 
 Denali's design differs greatly from that of Massalin's superoptimizer and GSO.
 Rather than generating programs and then testing them, Denali starts by generating a set of programs equivalent to the target program, and then selects the optimal among them.
@@ -212,16 +209,16 @@ Like Denali and Bansal's superoptimizer, it produces provably correct output.
 \section{Binary decision diagrams}
 \label{s:bdds}
 
-\emph{Binary decision diagrams} (BDDs) are data structures used to represent Boolean functions.
-They are directed acyclic graphs, with one or more nodes for each of the function's variables.
+A \emph{binary decision diagram} (BDD) is a data structure used to represent Boolean functions.
+It is a directed acyclic graphs, with one or more nodes for each of the function's variables.
 Each node has one or more incoming paths, and exactly two outgoing paths, commonly referred to as the \emph{high} and \emph{low} path.
-When using a BDD to determine the value of a Boolean function, one follows a node's high path if its variable is 1, and its low path if its variable is 0, starting at the root node, until one arrives at a terminal node.
+When using a BDD to determine the value of a Boolean function, one follows a node's high path if the corresponding variable is 1, and its low path if the corresponding variable is 0, starting at the root node, until one arrives at a terminal node.
 
 % if-then-else nodes
 % any boolean function can be represented as a BDD
 
 BDDs can be used to store and manipulate some Boolean functions very efficiently.
-However, the performance of the operations performed on a BDD, varies greatly depending on the function represented, and the order of its variables.
+The performance of the operations performed on a BDD, however, varies greatly depending on the function represented, and the order of its variables.
 
 BDDs were introduced by Lee \cite{lee59}, under the name \emph{binary-decision programs}.
 They were given their current name by Akers \cite{akers78}, who also explored the ideas of \emph{reducing} BDDs by removing redundant nodes, and of representing multiple functions in a single BDD.
@@ -234,16 +231,16 @@ Bryant also described a set of algorithms for combining BDDs using Boolean opera
 These algorithms are efficient, requiring at worst a number of time steps proportional to the product of the number of nodes in the two BDDs.
 
 Bryant further explored the idea of representing multiple functions in a single BDD, with common subexpressions reduced.
-This representation would later be referred to as a \emph{shared} BDD by Minato et al \cite{minato90}, who also noted that two equivalent Boolean functions represented in the same shared BDD, would have the same root node, making an equivalence test trivial.
+This representation would later be referred to as a \emph{shared} BDD by Minato et al. \cite{minato90}, who also noted that two equivalent Boolean functions represented in the same shared BDD, would have the same root node, making an equivalence test trivial.
 
 Bryant further showed that the variable ordering used can have a dramatic effect on the number of nodes in a reduced BDD, which in the best case is linear in the number of variables, and in the worst case exponential.
 Bryant states that finding the variable ordering that minimizes the number of nodes is an NP-complete problem.
-Bollig and Wegener \cite{bollig96} would later show that even determining whether an ordering exists for which the number of nodes is at most a given value, is an NP-complete problem.
+Bollig and Wegener \cite{bollig96} would later show that determining whether an ordering exists for which the number of nodes is at most a given value, is an NP-complete problem.
 
-Bryant asserts that for many functions, a good variable ordering can be determined by examining the structure of the functions.
+Bryant asserts that for many functions, a good variable ordering can be determined by examining the structure of the function.
 As an example, he mentions that for functions in which variables primarily interact pairwise, ordering variables and their partners consecutively gives good results.
 
-However, Bryant also states that there are functions that can only be represented using a number of nodes exponential in the number of variables, regardless of variable ordering, and proves that integer multiplication is such a function.
+Bryant also states, however, that there are functions that can only be represented using a number of nodes exponential in the number of variables, regardless of variable ordering, and proves that integer multiplication is such a function.
 
 % lower bounds given by Bollig and Wegener
 
@@ -254,13 +251,13 @@ To illustrate how a moderately complex Boolean function can be represented by a 
 To express the adder in Boolean logic, we represent $a$ as $n$ Boolean variables $\langle a_0, a_1, ..., a_{n-1} \rangle$, where $a_0$ and $a_{n-1}$ are the least and most significant bits of $a$, respectively.
 Doing the same for $b$, we get a total of $2n$ Boolean variables.
 
-The function for the carry-out bit, $c_{n-1}$, depends on every variable, and can be defined recursively as follows:
+The carry-out bit, $c_{n-1}$, depends on every variable, and can be defined recursively as follows:
 
 $$
   c_k = \left\{
   \begin{array}{ll}
-    a_k \AND b_k                                             & k = 0 \\
-    a_k \AND b_k \IOR a_k \AND c_{k-1} \IOR b_k \AND c_{k-1} & 0 < k < n \\
+    a_k \AND b_k                                                   & k = 0 \\
+    (a_k \AND b_k) \IOR (a_k \AND c_{k-1}) \IOR (b_k \AND c_{k-1}) & 0 < k < n \\
   \end{array}\right.
 $$
 
@@ -337,7 +334,8 @@ The superoptimizer implemented as part of this thesis project targets the x86 ar
 
 Since the x86 architecture is large and quite complex, it should be stressed that the superoptimizer only supports a very small subset of its features.
 While there are hundreds of instructions in the x86 general purpose instruction set, and many more in its numerous extensions, the superoptimizer's instruction set contains only 33 instructions.
-These instructions operate only on registers and flags, passing in immediate values or addressing the memory is not supported.
+These instructions operate only on registers and flags.
+Using immediate values or adressing the memory is not supported.
 
 The assembly language used to describe programs accepted as input or produced as output by the superoptimizer is similar, but not identical, to the one used by Intel.
 Programs generated by the superoptimizer can, with minor syntactical modifications, be assembled and executed on a real x86 machine.
@@ -360,7 +358,7 @@ There are 8 registers in the superoptimizer's architecture, each 32 bits in size
 Flags are single-bit values used to signify various conditions.
 They are written to and read from by instructions, in general as a side effect rather than directly.
 
-There are 17 different flags in the x86 architecture, but the superoptimizer only supports the 5 for which a corresponding \verb|cmov| instruction exists:
+There are 17 different flags in the x86 architecture, but the superoptimizer only supports the 5 for which a corresponding \verb|cmov| instruction (see below) exists:
 the \emph{carry} (\verb|cf|), \emph{overflow} (\verb|of|), \emph{parity} (\verb|pf|), \emph{sign} (\verb|sf|) and \emph{zero} (\verb|zf|) flags.
 
 \verb|cf| and \verb|of| are used to signify that overflow has occurred, meaning that the result of an operation had to be truncated to fit into a single register.
@@ -378,8 +376,8 @@ Programs accepted as input or produced as output by the superoptimizer, are writ
 Registers are referred to as \verb|r0| through \verb|r7|, rather than the usual names \verb|eax|, \verb|ebx|, etc.
 Statements are terminated by semicolons rather than newlines.
 
-For instructions that take one or two arguments, the first specifies the \emph{destination} register, while the second specifies the \emph{source} register.
-The instruction may read from the destination register, write to it, or do both.
+For instructions that take one or two arguments, the first is referred to as the \emph{destination} register, while the second is referred to as the \emph{source} register.
+Despite its name, the destination register may be read from, written to, or both.
 The source register, however, is only read from.
 
 An example of a program written in the superoptimizer's assembly language is the following, which sets \verb|r0| to the sum of \verb|r1| and \verb|r2|:
@@ -394,7 +392,7 @@ When selecting a set of instructions for a superoptimizer to support, some care 
 Only instructions which are likely to be used should be included, to avoid increasing the branching factor of the superoptimizer's search tree.
 Further, since some instructions take longer than others to execute on an x86 architecture \cite{x86_timing}, one might wish to avoid including slower instructions, to ensure that a program optimal in terms of length, also performs well in terms of execution time.
 
-However, since the focus of this thesis project is on testing programs for equivalence, the set of supported instructions was chosen to exhibit variety in terms of behavior with regards to registers and flags, and to demonstrate both the strengths and the weaknesses of the method used. The supported instructions are listed in Table~\ref{tab:insns}.
+Since the focus of this thesis project is on testing programs for equivalence, however, the set of supported instructions was chosen to exhibit variety in terms of behavior with regards to registers and flags, and to demonstrate both the strengths and the weaknesses of the method used. The supported instructions are listed in Table~\ref{tab:insns}.
 
 \begin{table}
 \centering
@@ -545,7 +543,7 @@ This information is used both when generating candidate programs, and when deter
 
 Any register that is read from before it is written to by the target program, is marked as an input register.
 Input registers are assumed to contain well-defined values at the start of the program's execution.
-Candidate programs generated by the superoptimizer are allowed, but not required, to read from these registers.
+It should be noted that the superoptimizer does not require that generated candidate programs read from all, or even any, of these registers, since it is possible that some inputs to the target programs are superfluous.
 
 The last register written to by the target program, is marked as the output register.
 Generated programs are required to use the same output register as the target program.
@@ -564,7 +562,7 @@ This continues until a user-specified maximum length has been reached, or the su
 The superoptimizer prunes the search tree by not generating some types of programs which cannot possibly be equivalent to the target program.
 
 In particular, the superoptimizer does not generate programs that read from registers or flags whose values are not well-defined. % explain why?
-For this, the superoptimizer keeps a \emph{live set} of registers, which initially consists of the input registers, as well as one of flags, which initially is empty.
+For this, the superoptimizer keeps a \emph{live set} of registers, which initially consists of the input registers, as well as a live set of flags, which initially is empty.
 Only instructions that read from registers in the live set, or instructions that read no registers at all, are generated.
 Similarly, instructions that read flags are only generated if those flags are in the live set.
 After generating an instruction that writes to a register or flags, the superoptimizer adds that register or those flags to their respective live sets.
@@ -582,7 +580,7 @@ The superoptimizer therefore has a special rule which permits, but does not requ
 For \verb|mov| and the \verb|cmov| instructions, the destination register is required to be different from the source register, since the instruction would otherwise have no effect.
 For \verb|mov|, the destination register is also required to be a register \emph{not} in the live set, or the program's output register.
 While \emph{allowing} \verb|mov| to write to a register not in the live set is necessary, since there would otherwise be no way of making a copy of a value required by multiple instructions,
-it should be noted that \emph{requiring} it to do so may cause the superoptimizer to generate programs that use too many registers unnecessarily.
+it should be noted that \emph{requiring} it to do so is a flaw in the design of the superoptimizer, which sometimes produces programs that use too many registers unnecessarily.
 
 When generating the very last instruction in a candidate program, the superoptimizer requires that the instruction writes to the program's output register, since the instruction would otherwise have no effect.
 % note! does not use GSO pruning that last insn must read reg or flag written to by preceding insn
@@ -620,7 +618,7 @@ Since it is still possible that the candidate program is in fact not equivalent 
 Indeed, for a program with a single 32-bit input register, there are only $2^{32}$ possible values to test.
 Considering that programs generated by a superoptimizer are no longer than 5 or 6 instructions, running them $2^{32}$ times should take less than a minute on a modern computer.
 
-However, this method will not work well even for programs with two input registers.
+This method will not work well even for programs with two input registers, however.
 Such a program would need to be run $2^{64}$ times, which would take several thousand years.
 
 % (2^32 * 5 * 3) / (2 GHz) = 32 seconds
@@ -661,12 +659,12 @@ Neither the BDDs representing the bits in $b$, nor those representing the other 
 \label{fig:bdd_add}
 \end{figure}
 
-Once the superoptimizer has stepped through all instructions in the program, the bits in the program's output register will reference BDDs that are canonical representations of Boolean functions on the initial variables.
+Once the superoptimizer has stepped through all instructions in the program, the bits in the program's output register will be represented by BDDs that are canonical representations of Boolean functions on the initial variables.
 
 To determine if a candidate program is equivalent to the target program, the superoptimizer performs the process described above for both programs, and then compares the references to the BDDs representing the bits in their output registers pairwise.
 If all references are equal, the two programs are equivalent.
 
-For each instructions in the superoptimizer's instructions set, a corresponding function was created to apply the equivalent Boolean-logic operations on the registers and flags.
+For each instruction in the superoptimizer's instructions set, a corresponding function was created to apply the equivalent Boolean-logic operations on the registers and flags.
 In the descriptions of these functions below, a register $a$ is represented by $n$ Boolean variables $\langle a_0, a_1, ..., a_{n-1} \rangle$, where $a_0$ and $a_{n-1}$ are the least and most significant bits of $a$, respectively.
 The flags are represented as $f_c$, $f_o$, $f_p$, $f_s$ and $f_z$, and are treated as global variables.
 
@@ -702,7 +700,7 @@ The \proc{mov} instruction is straight-forward, since it contains no BDD operati
 \end{codebox}
 
 The \proc{cmov} instructions are slightly more complex.
-Using Boolean logic, a conditional value can be expressed as $\NOT c \AND a \IOR c \AND b$, where $c$ is the condition, and $a$ and $b$ the two possible values.
+Using Boolean logic, a conditional value can be expressed as $(\NOT c \AND a) \IOR (c \AND b)$, where $c$ is the condition, and $a$ and $b$ the two possible values.
 Since the condition is the same for each bit, the \proc{cmov} instructions all have the following form, with different definitions of \id{condition}:
 
 \begin{codebox}
@@ -710,7 +708,7 @@ Since the condition is the same for each bit, the \proc{cmov} instructions all h
 \zi $c \gets \id{condition}$
 \zi \For $i \gets 0$ \To $n-1$
 \zi \Do
-      $a_i \gets \NOT c \AND a_i \IOR c \AND b_i$
+      $a_i \gets (\NOT c \AND a_i) \IOR (c \AND b_i)$
     \End
 \end{codebox}
 
@@ -773,7 +771,7 @@ They are all implemented as \emph{ripple-carry adders}, with $c_i$ being the car
 \zi $c_0 \gets a_0 \AND b_0$
 \zi $a_0 \gets a_0 \XOR b_0$
 \zi \For $i \gets 1$ \To $n-1$ \Do
-\zi   $c_i \gets a_i \AND b_i \IOR a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $c_i \gets (a_i \AND b_i) \IOR (a_i \AND c_{i-1}) \IOR (b_i \AND c_{i-1})$
 \zi   $a_i \gets a_i \XOR b_i \XOR c_{i-1}$ \End
 \zi $f_c \gets c_{n-1}$
 \zi $f_o \gets c_{n-1} \XOR c_{n-2}$
@@ -784,10 +782,10 @@ They are all implemented as \emph{ripple-carry adders}, with $c_i$ being the car
 
 \begin{codebox}
 \Procname{$\proc{adc}(a,b)$}
-\zi $c_0 \gets a_0 \AND b_0 \IOR a_0 \AND f_c \IOR b_0 \AND f_c$
+\zi $c_0 \gets (a_0 \AND b_0) \IOR (a_0 \AND f_c) \IOR (b_0 \AND f_c)$
 \zi $a_0 \gets a_0 \XOR b_0 \XOR f_c$
 \zi \For $i \gets 1$ \To $n-1$ \Do
-\zi   $c_i \gets a_i \AND b_i \IOR a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $c_i \gets (a_i \AND b_i) \IOR (a_i \AND c_{i-1}) \IOR (b_i \AND c_{i-1})$
 \zi   $a_i \gets a_i \XOR b_i \XOR c_{i-1}$ \End
 \zi $f_c \gets c_{n-1}$
 \zi $f_o \gets c_{n-1} \XOR c_{n-2}$
@@ -803,7 +801,7 @@ They are all implemented as \emph{ripple-carry adders}, with $c_i$ being the car
 \zi $c_0 \gets \NOT a_0 \AND b_0$
 \zi $a_0 \gets a_0 \XOR b_0$
 \zi \For $i \gets 1$ \To $n-1$ \Do
-\zi   $c_i \gets \NOT a_i \AND b_i \IOR \NOT a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $c_i \gets (\NOT a_i \AND b_i) \IOR (\NOT a_i \AND c_{i-1}) \IOR (b_i \AND c_{i-1})$
 \zi   $a_i \gets a_i \XOR b_i \XOR c_{i-1}$ \End
 \zi $f_c \gets c_{n-1}$
 \zi $f_o \gets c_{n-1} \XOR c_{n-2}$
@@ -814,10 +812,10 @@ They are all implemented as \emph{ripple-carry adders}, with $c_i$ being the car
 
 \begin{codebox}
 \Procname{$\proc{sbb}(a,b)$}
-\zi $c_0 \gets \NOT a_0 \AND b_0 \IOR \NOT a_0 \AND f_c \IOR b_0 \AND f_c$
+\zi $c_0 \gets (\NOT a_0 \AND b_0) \IOR (\NOT a_0 \AND f_c) \IOR (b_0 \AND f_c)$
 \zi $a_0 \gets a_0 \XOR b_0 \XOR f_c$
 \zi \For $i \gets 1$ \To $n-1$ \Do
-\zi   $c_i \gets \NOT a_i \AND b_i \IOR \NOT a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $c_i \gets (\NOT a_i \AND b_i) \IOR (\NOT a_i \AND c_{i-1}) \IOR (b_i \AND c_{i-1})$
 \zi   $a_i \gets a_i \XOR b_i \XOR c_{i-1}$ \End
 \zi $f_c \gets c_{n-1}$
 \zi $f_o \gets c_{n-1} \XOR c_{n-2}$
@@ -833,7 +831,7 @@ They are all implemented as \emph{ripple-carry adders}, with $c_i$ being the car
 \zi $c_0 \gets \NOT a_0 \AND b_0$
 \zi $t_0 \gets a_0 \XOR b_0$
 \zi \For $i \gets 1$ \To $n-1$ \Do
-\zi   $c_i \gets \NOT a_i \AND b_i \IOR \NOT a_i \AND c_{i-1} \IOR b_i \AND c_{i-1}$
+\zi   $c_i \gets (\NOT a_i \AND b_i) \IOR (\NOT a_i \AND c_{i-1}) \IOR (b_i \AND c_{i-1})$
 \zi   $t_i \gets a_i \XOR b_i \XOR c_{i-1}$ \End
 \zi $f_c \gets c_{n-1}$
 \zi $f_o \gets c_{n-1} \XOR c_{n-2}$
@@ -843,7 +841,7 @@ They are all implemented as \emph{ripple-carry adders}, with $c_i$ being the car
 \end{codebox}
 
 \proc{inc} and \proc{dec} behave like \proc{add} and \proc{sub}, but with $b_0$ set to 1 and all other bits in $b$ set to 0.
-Further, they don't modify $f_c$.
+Further, they do not modify $f_c$.
 Once simplified, their implementations are as follows:
 
 \begin{codebox}
@@ -917,7 +915,7 @@ Further, each bit in $p$ is assumed to be set to 0 initially.
 \zi   $p_{j} \gets p_{j} \XOR x$
 \zi   \For $i \gets j+1 \To 2n-1$ \Do
 \zi     $x \gets a_{i-j} \AND b_{j}$
-\zi     $c_{i} \gets p_{i} \AND x \IOR p_{i} \AND c_{i-1} \IOR x \AND c_{i-1}$
+\zi     $c_{i} \gets (p_{i} \AND x) \IOR (p_{i} \AND c_{i-1}) \IOR (x \AND c_{i-1})$
 \zi     $p_{i} \gets p_{i} \XOR x \XOR c_{i-1}$ \End \End
 \zi \For $i \gets 0 \To n-1$ \Do
 \zi   $a_{i} \gets p_{i}$ \End
@@ -927,7 +925,7 @@ Further, each bit in $p$ is assumed to be set to 0 initially.
 As seen, the last step of the implementation is to set $a$ to the $n$ least significant bits of $p$.
 $f_c$ and $f_o$ are then both set based on the remaining $n$ most significant bits of $p$.
 
-However, since we really only need to know of any of the $n$ most significant bits of $p$ is 1, we can also implement the multiplication instruction as follows:
+Since we really only need to know of any of the $n$ most significant bits of $p$ is 1, however, we can also implement the multiplication instruction as follows:
 
 \begin{codebox}
 \Procname{$\proc{imul}(a,b)$}
@@ -937,7 +935,7 @@ However, since we really only need to know of any of the $n$ most significant bi
 \zi   $p_{j} \gets p_{j} \XOR x$
 \zi   \For $i \gets j+1 \To n-1$ \Do
 \zi     $x \gets a_{i-j} \AND b_{j}$
-\zi     $c_{i} \gets p_{i} \AND x \IOR p_{i} \AND c_{i-1} \IOR x \AND c_{i-1}$
+\zi     $c_{i} \gets (p_{i} \AND x) \IOR (p_{i} \AND c_{i-1}) \IOR (x \AND c_{i-1})$
 \zi     $p_{i} \gets p_{i} \XOR x \XOR c_{i-1}$ \End
 \zi   \For $i \gets n \To 2n-1$ \Do
 \zi     $o \gets o \IOR a_{i-j} \AND b_{j}$ \End
@@ -984,7 +982,8 @@ It should be noted that these numbers depend on the target program, the number o
 Even so, they do provide some information about the behavior of the superoptimizer.
 
 Most importantly, the numbers show that the probabilistic test catches the vast majority, but not all, of the programs not equivalent to the target program.
-Despite this, a significant number of candidate programs which pass the probabilistic test are in fact not equivalent to the target program, although this could be seen as a sign of poorly chosen test vectors.
+Despite this, a significant number of candidate programs that pass the probabilistic test are in fact not equivalent to the target program, although this could be seen as a sign of poorly chosen test vectors.
+An example of a candidate program that passes the probabilistic test without being equivalent to the target program is given below.
 
 By looking at the number of generated programs of each length, one can also see that the branching factor increases with program length.
 % average branching factors:
@@ -1003,15 +1002,15 @@ Virtually all of the time was spent on the programs consisting of 5 instructions
 \centering
 \tiny
 \begin{tabular}{l|rrr}
-length & & & \\
+length & generated & passed probabilistic test & verified as equivalent \\
 \hline
-1 &         3 &   0 &   0 \\
-2 &       155 &   0 &   0 \\
-3 &     11849 &   0 &   0 \\
-4 &   1082001 &   2 &   1 \\
-5 & 121268867 & 326 & 209 \\
+1      &         3 &                         0 &                      0 \\
+2      &       155 &                         0 &                      0 \\
+3      &     11849 &                         0 &                      0 \\
+4      &   1082001 &                         2 &                      1 \\
+5      & 121268867 &                       326 &                    209 \\
 \end{tabular}
-\caption{The number of candidate programs generated by the superoptimizer (first column), the number of programs that passed the probabilistic test (second column), and the number of programs verified as equivalent to the target program using BDDs (third column).}
+\caption{The number of candidate programs generated by the superoptimizer, the number of programs that passed the probabilistic test, and the number of programs verified as equivalent to the target program using BDDs.}
 \label{tab:num_programs}
 \end{table}
 
@@ -1041,7 +1040,7 @@ On the other hand, the program that passed the probabilistic test, but was rejec
 add r0,r0; sbb r1,r1; neg r0; adc r1,r1;
 \end{verbatim}
 
-This program does, in fact, behave like the first one for every input value except one: the most negative 32-bit integer, which was not included in the test vector used by the superoptimizer's probabilistic test.
+This program does, in fact, behave like the first one for every input value except one: the most negative 32-bit integer, $-2^{31}$, which was not included in the test vector used by the superoptimizer's probabilistic test.
 Using two's complement, this number is stored with its most significant bit set to 1, and all other bits set to 0.
 For this number, the program behaves as shown in Table~\ref{tab:sign_incorrect}.
 
@@ -1076,7 +1075,7 @@ While it could certainly be argued that the most negative 32-bit integer should 
 & \verb|r1| $\gets -1$
 & \verb|r1| $\gets 0$ \\
 \end{tabular}
-\caption{Behavior of the program \texttt{add~r0,r0; sbb~r1,r1; sub~r1,r0; adc~r1,r0;} for different initial values of \texttt{r0}. The values of $X$ and $Y$ are irrelevant, as they cancel out.}
+\caption{Behavior of the program \texttt{add~r0,r0; sbb~r1,r1; sub~r1,r0; adc~r1,r0;} for different initial values of \texttt{r0}.}
 \label{tab:sign_correct}
 \end{table}
 
@@ -1141,7 +1140,7 @@ $P_0$    & $P_1$    & $P_2$    & $P_3$    & $P_4$    & $P_5$    & $P_6$    & $P_
 \hline
 0.119 ms & 0.175 ms & 0.284 ms & 0.281 ms & 0.389 ms & 0.447 ms & 0.966 ms & 0.679 ms & 0.673 ms \\
 \end{tabular}
-\caption{The time required to create BDD representations of the programs listed in Table~\ref{tab:test_programs}}.
+\caption{The time required to create BDD representations of the programs listed in Table~\ref{tab:test_programs}.}
 \label{tab:performance1}
 \end{table}
 
@@ -1149,7 +1148,7 @@ The time required for the superoptimizer to create BDD representations of the pr
 As expected, $P_0$ requires the least time.
 The entries for $P_1$ -- $P_4$ illustrate the complexity of addition and subtraction instructions relative to logic instructions.
 Looking at $P_4$ -- $P_7$, which all consist entirely of addition and subtraction instructions, one might infer that longer programs require more time.
-However, this conclusion is weakened by the considerable difference between the entries for $P_6$ and $P_7$, which are of the same length,
+This conclusion is weakened, however, by the considerable difference between the entries for $P_6$ and $P_7$, which are of the same length,
 as well as the entry for $P_8$, which contains twice as many, albeit simpler, instructions as $P_6$, and requires less time.
 
 \begin{table}
@@ -1169,7 +1168,7 @@ $P_6$ &          &          &          &          &          &          & 1.781 
 $P_7$ &          &          &          &          &          &          &          & 1.171 ms & 1.224 ms \\
 $P_8$ &          &          &          &          &          &          &          &          & 1.155 ms \\
 \end{tabular}
-\caption{The time required to determine pairwise equivalence of the programs listed in Table~\ref{tab:test_programs}.}.
+\caption{The time required to determine pairwise equivalence of the programs listed in Table~\ref{tab:test_programs}.}
 \label{tab:performance2}
 \end{table}
 
@@ -1227,7 +1226,7 @@ Even without support for multiplication and similarly complex instructions, the 
 There are many simple but important instructions, such as shift and rotate, for which support could be added.
 One could also add support for programs with multiple output registers with relative ease.
 
-As a final though, the method of using BDDs to determine program equivalence might be best utilized stripped of the program generator and the probabilistic test, intended to be used as an external verification tool for a more capable superoptimizer or similar piece of software.
+As a final thought, the method of using BDDs to determine program equivalence might be best utilized stripped of the program generator and the probabilistic test, intended to be used as an external verification tool for a more capable superoptimizer or similar piece of software.
 
 \bibliographystyle{ieeetr}
 \bibliography{thesis}
